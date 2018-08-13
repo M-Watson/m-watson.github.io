@@ -1,14 +1,18 @@
 body {
-  background-color: black;
+  background-color: white;
+
+  font-family: 'Oxygen', sans-serif;
 }
+
+
 
 div.hero {
   width : auto;
   height : 100px;
   top : 0;
-  background-color: black;
-  color: white;
-  padding-left:48%
+  background-color: white;
+  color: black;
+  padding-left:5%
 }
 
 div.content {
@@ -16,44 +20,4 @@ div.content {
   width: 66%;
   margin-left:15%;
   background-color: white;
-}
-
-div.box {
-    width: 100%;
-    background-color: black;
-    margin: auto;
-    z-index: 10;
-}
-
-
-div.explore {
-    width: 50%;
-    float: left;
-    height: 100px;
-    background-color: blue;
-        overflow: hidden;
-}
-.explore:hover {
-   height : 1000px;
-   background-color: red;
-   display : block;
-   overflow: visible;
-}
-
-div.create {
-    width: 50%;
-    float: right;
-    height: 100px;
-    background-color: green;
-    overflow: hidden;
-}
-.create:hover {
-   height : 1000px;
-   background-color: red;
-   display : block;
-   overflow: visible;
-}
-
-#clear {
-    clear: both;
 }

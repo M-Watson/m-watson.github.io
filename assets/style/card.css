@@ -4,6 +4,7 @@
     transition: 0.3s;
     background-color: white;
     margin: 5%;
+    overflow: hidden;
 }
 
 /* On mouse-over, add a deeper shadow */
@@ -15,4 +16,9 @@
 .container {
     padding: 10px 16px;
     background-color: :white;
+
+}
+
+a:link {
+    text-decoration: none;
 }
