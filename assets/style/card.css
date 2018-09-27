@@ -26,9 +26,11 @@ img.card-left {
   float:left;
    position: relative;
    width: 20%;
+   padding-right:5%;
 }
 img.card-right {
   float:right;
    position: relative;
    width: 20%;
+   padding-left:5%;
 }
