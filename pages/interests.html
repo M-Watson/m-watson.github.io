@@ -3,6 +3,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oxygen">
   <link rel="stylesheet" type="text/css" href="..\assets\style\navbar.css">
   <link rel="stylesheet" type="text/css" href="..\assets\style\interests.css">
+
     <title> Interests </title>
 </head>
 <body>
@@ -72,6 +73,58 @@
   </div>
 </div>
 
+<style>
+.card {
+    /* Add shadows to create the "card" effect
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);*/
+    transition: 0.3s;
+    background-color: white;
+    margin: 5%;
+    overflow: hidden;
+}
+
+/* On mouse-over, add a deeper shadow */
+.card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+/* Add some padding inside the card container */
+.container {
+    padding: 10px 16px;
+    background-color: :white;
+
+}
+
+a:link {
+text-decoration: none;
+}
+img.card-left {
+  float:left;
+   position: relative;
+   width: 20%;
+   padding-right:5%;
+}
+img.card-right {
+  float:right;
+   position: relative;
+   width: 20%;
+   padding-left:5%;
+}
+
+
+</style>
+
+
+<h2> Uploaded Packeges </h2>
+
+<a href="https://pypi.org/project/dclims/">
+  <div class="card">
+   <img class = "card-left" src="../assets/img/empty-box.png" alt="Avatar">   <div class="container">
+     <h2><b>dclims</b></h2>
+     <p>A python wrapper on PyPI for pulling and searching D.C. Legislation from their public api. </p>
+   </div>
+  </div>
+</a>
 
 
 
