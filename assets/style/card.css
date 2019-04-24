@@ -5,6 +5,7 @@
     background-color: white;
     margin: 5%;
     overflow: hidden;
+    height:
 }
 
 /* On mouse-over, add a deeper shadow */
@@ -33,4 +34,13 @@ img.card-right {
    position: relative;
    width: 20%;
    padding-left:5%;
+}
+
+img.bar-card-left {
+  float:left;
+   position: relative;
+   width: 1%;
+   height: 100%;
+   background-color: blue;
+   padding-right:5%;
 }
