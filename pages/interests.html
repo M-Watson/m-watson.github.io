@@ -1,133 +1,55 @@
 <html>
 <head>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oxygen">
+  <link rel="stylesheet" type="text/css" href="..\assets\style\style.css">
   <link rel="stylesheet" type="text/css" href="..\assets\style\navbar.css">
-  <link rel="stylesheet" type="text/css" href="..\assets\style\interests.css">
+  <link rel="stylesheet" type="text/css" href="..\assets\style\card.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oxygen">
 
     <title> Interests </title>
 </head>
 <body>
 
+<!-- MENU BAR --------------------------
   <ul class="navbar">
    <li class="navbar"><a href="../index.html">Home</a></li>
    <li class="navbar"><a href="./about.html">About</a></li>
    <li class="navbar"><a href="./interests.html">Interests</a></li>
    <li class="navbar"><a href="./research.html">Research</a></li>
   </ul>
+ MENU BAR--------------------------------------------->
 
 
-<div class="wrapper">
-  <div class="box a">
-    <h1> using </h1>
-    <ul>
-      <li> <b>Python</b> </li>
-      <li> <b>R</b> </li>
-      <li> <b>SQL</b> </li>
-      <li> &nbsp</li>
-      <li> <b>PHP</b> - mostly in the context of web development in WordPress but a little use outside that enviroment</li>
-      <li> <b>Standard web langauges</b> - HTML, CSS, and JavaScript </li>
-      <li> &nbsp </li>
-      <li> <b>LaTeX</b> </li>
-
-    </ul>
-      <h1> used </h1>
-        <ul>
-      <li> <b>MatLab</b> </li>
-      <li> <b>Mathematica</b> </li>
-      <li> <b>LabView</b> </li>
-      <li> <b>C#</b> </li>
-      <li> <b>C/C++</b> </li>
-      <li> <b>Java</b> </li>
-      <li> <b>SPSS</b> </li>
-</ul>
-
+  <div class="hero">
+  <h1></h1>
   </div>
-  <div class="box b">
-<h1> learning </h1>
-    <ul>
-<li> <b>Rust</b> </li>
-<li> <b>Go</b> </li>
-<li> <b>Dart</b> </li>
-<ul>
-  <li> I would like to learn Dart mostly to use the Flutter framework.  It seems like an interesting
-  potential for crossplatform develompent. </li>
-</ul>
-<li> <b>Julia</b> </li>
-<li> Moved over on October 1, 2018.  I have started a repo section for playing around with Julia and am working through tutorials. Currently working a little on using Julia in ways I would use Python </li>
 
-</ul>
-  </div>
-  <div class="box c">
-<h1> interested </h1>
-    <ul>
-<li> <b>Kotlin</b> </li>
-<li> <b>Swift</b> </li>
-<li> <b> Quantum programmiming </b></li>
-<ul>
-<li> <b>Q#</b> </li>
-<li> <b>QTip </b></li>
-<li> <b>ProjectQ </b></li>
-</ul>
-</ul>
-  </div>
-  </div>
-</div>
-
-<style>
-.card {
-    /* Add shadows to create the "card" effect
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);*/
-    transition: 0.3s;
-    background-color: white;
-    margin: 5%;
-    overflow: hidden;
-}
-
-/* On mouse-over, add a deeper shadow */
-.card:hover {
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-}
-
-/* Add some padding inside the card container */
-.container {
-    padding: 10px 16px;
-    background-color: :white;
-
-}
-
-a:link {
-text-decoration: none;
-}
-img.card-left {
-  float:left;
-   position: relative;
-   width: 20%;
-   padding-right:5%;
-}
-img.card-right {
-  float:right;
-   position: relative;
-   width: 20%;
-   padding-left:5%;
-}
-
-
-</style>
-
-
-<h2> Uploaded Packages </h2>
-
-<a href="https://pypi.org/project/dclims/">
-  <div class="card">
-   <img class = "card-left" src="../assets/img/empty-box.png" alt="Avatar">   <div class="container">
-     <h2><b>dclims</b></h2>
-     <p>A python wrapper on PyPI for pulling and searching D.C. Legislation from their public api. </p>
-   </div>
-  </div>
-</a>
+  <a href="./interests/programming-language-interests.html">
+    <div class="flatcard" style = "min-height: 100px; border-left:solid;">
+      <div class="container">
+       <h4><b>programming</b></h4>
+       <p> </p>
+     </div>
+    </div>
+  </a>
 
 
 
+  <a href="./location-dives.html">
+    <div panel class="flatcard" style = "min-height: 100px; border-left:solid;">
+     <div class="container">
+       <h4 id="about"><b>locations</b></h4>
+       <p> </p>
+     </div>
+    </div>
+  </a>
 
+  <a href="../index.html">
+    <div class="flatcard" style = "min-height: 100px; border-left:solid;">
+      <div class="container">
+       <h4><b>home</b></h4>
+       <p> </p>
+     </div>
+    </div>
+  </a>
 
 </body>
