@@ -23,9 +23,9 @@
 
 
 
-<a style="cursor: pointer;" onclick="toggle('div3')" href="#">
+<a style="cursor: pointer;" onclick="toggle('researchDiv');underline('researchBar');" href="#">
 
-  <div class="flatcard" style = "min-height: 100px; border-left:solid;">
+  <div class="homecard" id = "researchBar" style = "border-left:medium solid; border-bottom: medium none;">
     <div class="container">
      <h4><b>research</b></h4>
      <p>  </p>
@@ -33,7 +33,7 @@
    </div>
   </div>
 </a>
-<div style="margin-left:10%; margin-top:-5%; display:none" id="div3">
+<div style="margin-left:10%; margin-top:-5%; display:none" id="researchDiv">
 
   <h2> Research Publications </h2>
   <p>Here are some select work of ongoing and past research. More publications can be found at <b><a href="https://scholar.google.com/citations?hl=en&user=3he6WMMAAAAJ&view_op=list_works&sortby=pubdate">Google Scholar</a></b>.
@@ -143,14 +143,57 @@
 
 
 
-<a href="./pages/about.html">
-  <div panel class="flatcard" style = "min-height: 100px; border-left:solid;">
-   <div class="container">
-     <h4 id="about"><b>about</b></h4>
-     <p> </p>
+<a style="cursor: pointer;" onclick="toggle('aboutDiv');underline('aboutBar');">
+
+  <div class="homecard" id = "aboutBar" style = "border-left:medium solid; border-bottom: medium none;">
+    <div class="container">
+     <h4><b>about</b></h4>
+     <p>  </p>
+
    </div>
   </div>
 </a>
+<div style="margin-left:10%; margin-top:-5%; display:none" id="aboutDiv">
+
+     <a href="https://www.linkedin.com/in/maawatson/">
+       <div class="card">
+        <img class = "card-left" src="./assets/img/profimg-2.jpg" alt="Avatar" >
+        <div class="container">
+          <h4><b>Michael Watson</b></h4>
+          <p><b> Don't worry, this will be changed, it is currently my bio on my employers website... </b></p>
+          <p>
+          Michael Watson joined the D.C. Policy Center in January 2017 as the Director of Data and Technology.
+          Before the D.C. Policy Center, Michael worked at RAND Corporation as a Technical Analyst.
+          During his time at RAND he worked on a wide range of projects including defining data science teams in the government, identifying new technology for law enforcement, and helping find slow points in government acquisition.
+          Before RAND Corporation he was an Adjunct Instructor at Towson University and Howard County Community College teaching introductory and elective science courses.
+        </p>
+        <p>
+          Michael holds a Master's of Science from Towson University in Applied Physics.  He conducted research on novel two-dimensional materials.
+          He has a Bachelor's of Science from DePaul University in Physics where he conducted research on ultra-fast laser-matter interactions.
+          He has additional education in project management, economics, and supply chain management.
+        </p>
+        </div>
+       </div>
+     </a>
+
+     <a href="./pages/interests.html">
+       <div class="flatcard" style = "min-height: 100px; border-left:solid;">
+         <div class="container">
+          <h4><b>interests</b></h4>
+          <p> </p>
+        </div>
+       </div>
+     </a>
+
+     <h2> Previous employment </h2>
+
+     <h2>D.C. Policy Center</h2>
+     <h2>RAND Corporation</h2>
+
+   </div>
+   </div>
+  </div>
+
 
 </body>
 <script>
@@ -162,4 +205,16 @@ function toggle(obj) {
     x.style.display = "none";
   }
 }
+
+function underline(obj) {
+  var x = document.getElementById(obj);
+  if (x.style.borderLeft === "medium solid") {
+    x.style.borderLeft = "medium none"
+    x.style.borderBottom = "medium solid";
+  } else {
+    x.style.borderLeft = "medium solid";
+    x.style.borderBottom = "medium none";
+  }
+}
+
 </script>
