@@ -27,6 +27,11 @@
   min-height: 100px;
 }
 
+.drop-content{
+  margin-left:10%;
+  padding-top:1%;
+  margin-top:-5%;
+}
 /* On mouse-over, add a deeper shadow */
 .card:hover {
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
