@@ -189,7 +189,7 @@
    </div>
   </div>
 
-
+<button onclick="toggleDarkMode()">Toggle dark mode</button>
 </body>
 <script>
 function toggle(obj) {
@@ -211,5 +211,12 @@ function underline(obj) {
     x.style.borderBottom = "medium none";
   }
 }
+
+
+function toggleDarkMode() {
+   var element = document.body;
+   element.classList.toggle("dark-mode");
+}
+
 
 </script>
