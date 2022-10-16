@@ -1,0 +1,46 @@
+
+div.box {
+    width: 100%;
+    background-color: white;
+    margin: auto;
+    z-index: 10;
+}
+
+
+div.explore {
+    width: 40%;
+    float: left;
+    height: 100px;
+    background-color: white;
+        overflow: hidden;
+          box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+.explore:hover {
+   height : 1000px;
+       width: 60%;
+   background-color: grey;
+   display : block;
+   overflow: visible;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
+div.create {
+    width: 40%;
+    float: right;
+    height: 100px;
+    background-color: white;
+    overflow: hidden;
+      box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+.create:hover {
+width: 60%;
+   height : 1000px;
+   background-color: grey;
+   display : block;
+   overflow: visible;
+     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
+#clear {
+    clear: both;
+}
