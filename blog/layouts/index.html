@@ -3,6 +3,9 @@
 <link rel="stylesheet" type="text/css" href=".\static\style\style.css">
 <link rel="stylesheet" type="text/css" href=".\static\style\navbar.css">
 <link rel="stylesheet" type="text/css" href=".\static\style\card.css">
+<link rel="stylesheet" type="text/css" href=".\style\style.css">
+<link rel="stylesheet" type="text/css" href=".\style\navbar.css">
+<link rel="stylesheet" type="text/css" href=".\style\card.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oxygen">
 {{ range .Site.Params.custom_css -}}
     <link rel="stylesheet" href="{{ . | absURL }}">
@@ -204,7 +207,7 @@
    </div>
   </div>
 
-<button onclick="toggleDarkMode()">Toggle dark mode</button>
+<!---<button onclick="toggleDarkMode()">Toggle dark mode</button>--->
 </body>
 <script>
 function toggle(obj) {
