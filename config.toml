@@ -1,7 +1,7 @@
 baseURL = 'http://example.org/'
 languageCode = 'en-us'
 title = 'My New Hugo Site'
-
+publishDir = "."
 [params]
 custom_css = ["style/card-for-no-slides.css",
                         "style/card-for-slides.css",
