@@ -141,11 +141,12 @@
   <div class="homecard" id = "postsBar" style = "border-left:medium solid; border-bottom: medium none;">
     <div class="container">
      <h4>posts</b></h4>
-   </div>
+     </div>
   </div>
 </a>
 <div class="drop-content" style="display:none" id="postsDiv">
   <p> Blog posts </p>
+  {{ .Render "list" }}
 </div>
 
 <a style="cursor: pointer;" onclick="toggle('aboutDiv');underline('aboutBar');">
