@@ -1,4 +1,3 @@
-baseURL = 'm-watson.github.io'
 languageCode = 'en-us'
 title = 'M-Watson'
 publishDir = "."
