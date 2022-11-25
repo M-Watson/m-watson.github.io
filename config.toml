@@ -1,6 +1,6 @@
-baseURL = 'http://example.org/'
+baseURL = 'm-watson.github.io'
 languageCode = 'en-us'
-title = 'My New Hugo Site'
+title = 'M-Watson'
 publishDir = "."
 [params]
 custom_css = ["style/card-for-no-slides.css",
