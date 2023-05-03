@@ -1,5 +1,4 @@
-{{ define "main" }}
-  <article>
+  <article style="margin-left:10%;max-width:50%">
     <section>
       {{- .Content -}}
     </section>
@@ -9,7 +8,9 @@
           {{ .Render "summary" }}
         </div>
       {{ end }}
+      <h2 style="text-decoration:underline;"><a href="/posts/" title="Posts">All Posts</a></h2>
+
     </section>
     {{- template "_internal/pagination.html" . -}}
+
   </article>
-{{ end }}
