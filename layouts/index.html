@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<head>
+<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="navbar.css">
+<link rel="stylesheet" type="text/css" href="card.css">
+<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="navbar.css">
+<link rel="stylesheet" type="text/css" href="card.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oxygen">
+{{ range .Site.Params.custom_css -}}
+    <link rel="stylesheet" href="{{ . | absURL }}">
+{{- end }}
+<title> M-Watson Blog </title>
+</head>
+
+<body>
+  <!--
+  <ul class="navbar">
+   <li class="navbar"><a href="./index.html">Home</a></li>
+   <li class="navbar"><a href="./pages/about.html">About</a></li>
+   <li class="navbar"><a href="./pages/interests.html">Interests</a></li>
+   <li class="navbar"><a href="./pages/research.html">Research</a></li>
+  </ul>
+-->
+
+<div class="hero">
+<h1></h1>
+</div>
+
+
+
+<a style="cursor: pointer;" onclick="toggle('researchDiv');underline('researchBar');" href="#">
+
+  <div class="homecard" id = "researchBar" style = "border-left:medium solid; border-bottom: medium none;">
+    <div class="container">
+     <h4><b>research</b></h4>
+   </div>
+  </div>
+</a>
+<div class="drop-content"style="display:none" id="researchDiv">
+{{ .Render "research" }}
+</div>
+
+
+<a style="cursor: pointer;" onclick="toggle('postsDiv');underline('postsBar');">
+  <div class="homecard" id = "postsBar" style = "border-left:medium solid; border-bottom: medium none;">
+    <div class="container">
+     <h4>posts</b></h4>
+     </div>
+  </div>
+</a>
+<div class="drop-content" style="display:none" id="postsDiv">
+  {{ .Render "landing-list" }}
+</div>
+
+<a style="cursor: pointer;" onclick="toggle('aboutDiv');underline('aboutBar');">
+
+  <div class="homecard" id = "aboutBar" style = "border-left:medium solid; border-bottom: medium none;">
+    <div class="container">
+     <h4><b>about</b></h4>
+   </div>
+  </div>
+</a>
+<div class="drop-content" style="display:none" id="aboutDiv">
+     {{ .Render "about" }}
+   </div>
+   </div>
+  </div>
+
+<!---<button onclick="toggleDarkMode()">Toggle dark mode</button>--->
+</body>
+<script>
+function toggle(obj) {
+  var x = document.getElementById(obj);
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+
+function underline(obj) {
+  var x = document.getElementById(obj);
+  if (x.style.borderLeft === "medium solid") {
+    x.style.borderLeft = "medium none"
+    x.style.borderBottom = "medium solid";
+  } else {
+    x.style.borderLeft = "medium solid";
+    x.style.borderBottom = "medium none";
+  }
+}
+
+
+function toggleDarkMode() {
+   var element = document.body;
+   element.classList.toggle("dark-mode");
+}
+
+
+</script>

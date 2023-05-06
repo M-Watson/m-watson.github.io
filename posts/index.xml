@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>M-Watson</title>
+    <link>/posts/</link>
+    <description>Recent content on M-Watson</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 23 Mar 2017 00:00:00 +0000</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>New Post</title>
+      <link>/posts/new-post/</link>
+      <pubDate>Fri, 25 Nov 2022 08:51:38 -0600</pubDate>
+      
+      <guid>/posts/new-post/</guid>
+      <description>This is a new post This is a new post This is a new post This is a new post This is a new post This is a new post This is a new post This is a new post
+This is a new post This is a new post This is a new post This is a new post This is a new post This is a new post This is a new post This is a new post</description>
+    </item>
+    
+    <item>
+      <title>My First Blog</title>
+      <link>/posts/my-first-blog/</link>
+      <pubDate>Mon, 01 Aug 2022 14:59:05 -0500</pubDate>
+      
+      <guid>/posts/my-first-blog/</guid>
+      <description>This is my first blog
+hello a new paragaph</description>
+    </item>
+    
+  </channel>
+</rss>
