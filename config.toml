@@ -1,7 +1,9 @@
 languageCode = 'en-us'
 title = 'M-Watson'
 publishDir = "."
-staticDir = ['static/img','static/style']
+#baseURL = "/"
+relativeURLs = true
+staticDir = ['style/','img/']
 [params]
 custom_css = ["style/card-for-no-slides.css",
                         "style/card-for-slides.css",
