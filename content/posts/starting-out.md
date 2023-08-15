@@ -1,11 +1,13 @@
 ---
 title: "Starting Out"
 date: 2023-08-14T20:19:52-05:00
-draft: true
+draft: false
+- \usepackage{braket}
 ---
 
-This is a test
+I am testing out the braket package
 
-more will work here
-
-Oh man
+$\braket{\alpha|\phi}$
+$\bra{\beta}$
+$\ket{\gamma}$
+$\braket{\psi|x|psi}$
