@@ -1,11 +1,17 @@
 ---
 title: "Starting Out"
 date: 2023-08-14T20:19:52-05:00
-draft: true
+draft: false
 ---
 
-This is a test
+<head>
+    <script type="text/javascript"
+      src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    </head>
+I am testing out the braket package
 
-more will work here
-
-Oh man
+$\braket{\alpha|\phi}$
+$\bra{\beta}$
+$\ket{\gamma}$
+$\braket{\psi|x|psi}$
