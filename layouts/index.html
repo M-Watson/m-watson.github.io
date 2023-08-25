@@ -1,18 +1,19 @@
+{{ define "main" }}
 <!DOCTYPE html>
 <head>
-<link rel="stylesheet" type="text/css" href="static/style/style.css">
-<link rel="stylesheet" type="text/css" href="static/style/navbar.css">
-<link rel="stylesheet" type="text/css" href="static/style/card.css">
+  <link rel="stylesheet" type="text/css" href="static/style/style.css">
+  <link rel="stylesheet" type="text/css" href="static/style/navbar.css">
+  <link rel="stylesheet" type="text/css" href="static/style/card.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oxygen">
-<link rel="stylesheet" type="text/css" href="style.css">
-<link rel="stylesheet" type="text/css" href="navbar.css">
-<link rel="stylesheet" type="text/css" href="card.css">
-<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="/style/style.css">
+<link rel="stylesheet" type="text/css" href="/style/navbar.css">
+<link rel="stylesheet" type="text/css" href="/card.css">
+<link rel="stylesheet" type="text/css" href="/style.css">
 <link rel="stylesheet" type="text/css" href="navbar.css">
 <link rel="stylesheet" type="text/css" href="card.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oxygen">
 {{ range .Site.Params.custom_css -}}
-    <link rel="stylesheet" href="{{ . | absURL }}">
+    <link rel="stylesheet" type="text/css" href="{{ . | absURL }}">
 {{- end }}
 <title> M-Watson Blog </title>
 </head>
@@ -102,3 +103,4 @@ function toggleDarkMode() {
 
 
 </script>
+{{ end }}
