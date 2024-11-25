@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Posts on </title>
-    <link>//localhost:1313/posts/</link>
-    <description>Recent content in Posts on </description>
+    <title>Posts on M-Watson</title>
+    <link>/posts/</link>
+    <description>Recent content in Posts on M-Watson</description>
     <generator>Hugo -- 0.139.0</generator>
-    <language>en</language>
+    <language>en-us</language>
     <lastBuildDate>Mon, 07 Oct 2024 11:18:21 -0500</lastBuildDate>
-    <atom:link href="//localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Restarting my page</title>
-      <link>//localhost:1313/posts/my-first-post/</link>
+      <link>/posts/my-first-post/</link>
       <pubDate>Mon, 07 Oct 2024 11:18:21 -0500</pubDate>
-      <guid>//localhost:1313/posts/my-first-post/</guid>
+      <guid>/posts/my-first-post/</guid>
       <description>&lt;p&gt;Well here we are again, we as in just me since I can&amp;rsquo;t imagine anyone has stumbled onto this page before. I decided to go back to a base Hugo to streamline the publishing process since I made a huge mess out of the directory structure before. I will probably start getting back into my custom layouts but using the Hugo approach so everything doesn&amp;rsquo;t get all messed up again.&lt;/p&gt;</description>
     </item>
   </channel>
