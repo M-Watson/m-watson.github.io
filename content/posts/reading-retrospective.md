@@ -4,7 +4,7 @@ date: 2024-11-25T08:33:44-06:00
 tags: []
 featured_image: ""
 description: ""
-draft: true
+draft: false
 ---
 
 At some point after leaving grad school and starting to work I realized I was no longer reading. For work I was reading a lot but I was no longer really following my interests and did not read for personal exploration or entertainment. So in mid 2018 (according to the created date on a file I use to track everything) I decided to find a way to re-start a reading habit. I wanted to make sure I wasn't spending a whole bunch of time just coming up with some crazy method to start reading more so I went simple. I started a document to track what books I started and finished and set a goal for at least reading one book a month. This felt like a decent starting pace. 
