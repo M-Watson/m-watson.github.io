@@ -1,1 +1,3 @@
 theme = 'papermod'
+[params.social]
+    fediverse_creator= "@mwatson@mas.to" 
