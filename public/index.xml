@@ -2,31 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>M-Watson</title>
-    <link>/</link>
+    <link>//localhost:1313/</link>
     <description>Recent content on M-Watson</description>
     <generator>Hugo -- 0.139.0</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 25 Nov 2024 08:33:44 -0600</lastBuildDate>
-    <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="//localhost:1313/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Reading Retrospective</title>
-      <link>/posts/reading-retrospective/</link>
+      <link>//localhost:1313/posts/reading-retrospective/</link>
       <pubDate>Mon, 25 Nov 2024 08:33:44 -0600</pubDate>
-      <guid>/posts/reading-retrospective/</guid>
+      <guid>//localhost:1313/posts/reading-retrospective/</guid>
       <description>&lt;p&gt;At some point after leaving grad school and starting to work I realized I was no longer reading. For work I was reading a lot but I was no longer really following my interests and did not read for personal exploration or entertainment. So in mid 2018 (according to the created date on a file I use to track everything) I decided to find a way to re-start a reading habit. I wanted to make sure I wasn&amp;rsquo;t spending a whole bunch of time just coming up with some crazy method to start reading more so I went simple. I started a document to track what books I started and finished and set a goal for at least reading one book a month. This felt like a decent starting pace.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Restarting my page</title>
-      <link>/posts/my-first-post/</link>
+      <link>//localhost:1313/posts/my-first-post/</link>
       <pubDate>Mon, 07 Oct 2024 11:18:21 -0500</pubDate>
-      <guid>/posts/my-first-post/</guid>
+      <guid>//localhost:1313/posts/my-first-post/</guid>
       <description>&lt;p&gt;Well here we are again, we as in just me since I can&amp;rsquo;t imagine anyone has stumbled onto this page before. I decided to go back to a base Hugo to streamline the publishing process since I made a huge mess out of the directory structure before. I will probably start getting back into my custom layouts but using the Hugo approach so everything doesn&amp;rsquo;t get all messed up again.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Ideation</title>
-      <link>/ideation/</link>
+      <link>//localhost:1313/ideation/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/ideation/</guid>
+      <guid>//localhost:1313/ideation/</guid>
       <description></description>
     </item>
   </channel>
