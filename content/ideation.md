@@ -1,5 +1,5 @@
 ---
-title: ideation
+title: Ideation
 layout: ideation
 type: page
 ---
