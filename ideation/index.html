@@ -386,12 +386,12 @@
             border-color: #ccc;
             background: #fff;
         }
-        .modal-expand-section, .modal-footer {
+        .modal-section, .modal-footer {
             margin-top: 30px;
             padding-top: 30px;
             border-top: 1px solid #eee;
         }
-        .modal-expand-section h4 {
+        .modal-section h4 {
             margin-top: 0;
             margin-bottom: 20px;
         }
@@ -403,7 +403,7 @@
         }
 
         /* --- JSON & Rating Editor Styles --- */
-        #json-editor, #rating-category-list {
+        #json-editor, .category-list {
             width: 100%;
             font-family: monospace;
             font-size: 0.9rem;
@@ -415,18 +415,18 @@
             height: 60vh;
             resize: vertical;
         }
-        #rating-category-list {
+        .category-list {
             list-style: none;
             padding: 0;
         }
-        #rating-category-list li {
+        .category-list li {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px;
             border-bottom: 1px solid #f5f5f5;
         }
-        #rating-category-list li:last-child {
+        .category-list li:last-child {
             border-bottom: none;
         }
         .delete-category-btn {
@@ -478,7 +478,7 @@
         <button id="nav-new-idea" class="nav-button">New Idea</button>
         <button id="nav-all-ideas" class="nav-button">All Ideas</button>
         <button id="nav-recall" class="nav-button">Recall Idea</button>
-        <button id="nav-manage-ratings" class="nav-button">Manage Ratings</button>
+        <button id="nav-manage-defaults" class="nav-button">Manage Defaults</button>
         <button id="nav-view-json" class="nav-button">View/Edit JSON</button>
         <button id="nav-import" class="nav-button">Import</button>
         <button id="nav-export" class="nav-button">Export</button>
@@ -560,24 +560,24 @@
         </div>
     </div>
     
-    <!-- Rating Category Manager Page View -->
+    <!-- Default Rating Category Manager Page View -->
     <div id="rating-manager-page" class="page">
         <div class="main-content">
             <div class="page-header">
-                <h1>Manage Rating Categories</h1>
+                <h1>Manage Default Rating Categories</h1>
             </div>
             <form id="add-category-form" style="display: flex; gap: 10px; margin-bottom: 20px;">
                 <input type="text" id="new-category-name" placeholder="New category name..." style="flex-grow: 1; border-bottom: 1px solid #ddd; padding: 8px 0; font-size: 1rem; font-family: 'Georgia', serif;">
                 <button type="submit">Add</button>
             </form>
-            <ul id="rating-category-list">
+            <ul id="rating-category-list" class="category-list">
                 <!-- Populated by JS -->
             </ul>
         </div>
     </div>
 
     <!-- Modals -->
-    <div id="idea-detail-modal" class="modal"><div class="modal-content"><span class="close-btn">&times;</span><h2 id="modal-idea-title"></h2><div id="modal-idea-body"></div><div class="modal-expand-section"><h4>Add to this Idea</h4><form id="expand-form-in-modal"><input type="hidden" id="modal-idea-id" name="idea_id"><textarea name="notes" placeholder="Add a new note..."></textarea><input type="text" name="tags" placeholder="Add new tags, comma separated..."><div class="sliders-container"></div><button type="submit">Save Addition</button></form></div><div class="modal-footer"><button id="modal-delete-btn" class="btn-danger">DELETE</button></div></div></div>
+    <div id="idea-detail-modal" class="modal"><div class="modal-content"><span class="close-btn">&times;</span><h2 id="modal-idea-title"></h2><div id="modal-idea-body"></div><div class="modal-section" id="idea-rating-manager"><h4>Manage This Idea's Ratings</h4><ul class="category-list" id="idea-specific-category-list"></ul><form id="add-idea-specific-category-form" style="display: flex; gap: 10px; margin-top: 20px;"><input type="text" placeholder="New category for this idea..." style="flex-grow: 1;"><button type="submit">Add</button></form></div><div class="modal-section"><h4>Add New Rating</h4><form id="expand-form-in-modal"><input type="hidden" id="modal-idea-id" name="idea_id"><textarea name="notes" placeholder="Add a new note..."></textarea><input type="text" name="tags" placeholder="Add new tags, comma separated..."><div class="sliders-container"></div><button type="submit">Save Addition</button></form></div><div class="modal-footer"><button id="modal-delete-btn" class="btn-danger">DELETE</button></div></div></div>
     <div id="confirm-modal" class="modal"><div class="modal-content"><h4>Confirm Deletion</h4><p>Are you sure you want to delete this idea and all its associated data? This action cannot be undone.</p><div class="confirm-buttons"><button id="confirm-delete-btn" class="btn-danger">Yes, Delete</button><button id="cancel-delete-btn" class="btn-secondary">Cancel</button></div></div></div>
     <div id="recall-modal" class="modal"><div class="modal-content"><span class="close-btn">&times;</span><h2>Recall & Expand</h2><p id="recall-idea-text"></p><form id="recall-expand-form"><input type="hidden" id="recall-idea-id" name="idea_id"><textarea name="notes" placeholder="Expand on this idea..."></textarea><input type="text" name="tags" placeholder="Add new tags, comma separated..."><div class="sliders-container"></div><button type="submit">Save Expansion</button></form></div></div>
 
@@ -588,7 +588,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- App State & DB ---
     let ideas = [];
-    let ratingCategories = [];
+    let defaultRatingCategories = [];
     
     function loadDB() {
         const ideasData = localStorage.getItem(DB_KEY);
@@ -601,19 +601,30 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const categoriesData = localStorage.getItem(RATING_CATEGORIES_KEY);
         try {
-            ratingCategories = categoriesData ? JSON.parse(categoriesData) : ['Difficulty', 'Profitability'];
-            if (!Array.isArray(ratingCategories)) ratingCategories = ['Difficulty', 'Profitability'];
+            defaultRatingCategories = categoriesData ? JSON.parse(categoriesData) : ['Difficulty', 'Profitability'];
+            if (!Array.isArray(defaultRatingCategories)) defaultRatingCategories = ['Difficulty', 'Profitability'];
         } catch (e) {
-            ratingCategories = ['Difficulty', 'Profitability'];
+            defaultRatingCategories = ['Difficulty', 'Profitability'];
         }
+        
+        // Data migration for older ideas
+        ideas.forEach(idea => {
+            if (!idea.hasOwnProperty('ratingCategories')) {
+                idea.ratingCategories = [...defaultRatingCategories];
+            }
+            if (!idea.hasOwnProperty('tags')) {
+                idea.tags = [];
+            }
+        });
+        saveDB();
     }
 
     function saveDB() {
         localStorage.setItem(DB_KEY, JSON.stringify(ideas));
     }
     
-    function saveRatingCategories() {
-        localStorage.setItem(RATING_CATEGORIES_KEY, JSON.stringify(ratingCategories));
+    function saveDefaultRatingCategories() {
+        localStorage.setItem(RATING_CATEGORIES_KEY, JSON.stringify(defaultRatingCategories));
         populateRatingFilter();
     }
 
@@ -644,8 +655,8 @@ document.addEventListener('DOMContentLoaded', function() {
             page.classList.toggle('active', page.id === pageId);
         });
         if (pageId === 'all-ideas-page') renderIdeas();
-        if (pageId === 'json-editor-page') jsonEditor.value = JSON.stringify({ ideas, ratingCategories }, null, 2);
-        if (pageId === 'rating-manager-page') renderRatingManager();
+        if (pageId === 'json-editor-page') jsonEditor.value = JSON.stringify({ ideas, ratingCategories: defaultRatingCategories }, null, 2);
+        if (pageId === 'rating-manager-page') renderDefaultRatingManager();
     }
 
     sidebar.addEventListener('click', (e) => {
@@ -656,7 +667,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (buttonId === 'nav-new-idea') showPage('landing-page');
         if (buttonId === 'nav-all-ideas') showPage('all-ideas-page');
         if (buttonId === 'nav-view-json') showPage('json-editor-page');
-        if (buttonId === 'nav-manage-ratings') showPage('rating-manager-page');
+        if (buttonId === 'nav-manage-defaults') showPage('rating-manager-page');
         if (buttonId === 'nav-recall') handleRecall();
         if (buttonId === 'nav-import') fileInput.click();
         if (buttonId === 'nav-export') handleExport();
@@ -670,9 +681,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const newData = JSON.parse(jsonEditor.value);
             if (Array.isArray(newData.ideas) && Array.isArray(newData.ratingCategories)) {
                 ideas = newData.ideas;
-                ratingCategories = newData.ratingCategories;
+                defaultRatingCategories = newData.ratingCategories;
                 saveDB();
-                saveRatingCategories();
+                saveDefaultRatingCategories();
                 alert('JSON data saved successfully!');
                 showPage('all-ideas-page');
             } else {
@@ -706,7 +717,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 timestamp: new Date().toISOString(),
                 notes: [],
                 ratings: [],
-                tags: parseTags(ideaTagsInput.value)
+                tags: parseTags(ideaTagsInput.value),
+                ratingCategories: [...defaultRatingCategories]
             };
             ideas.push(newIdea);
             saveDB();
@@ -809,7 +821,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function populateRatingFilter() {
         const select = document.getElementById('filter-rating-metric');
         select.innerHTML = '<option value="">--</option>';
-        ratingCategories.forEach(cat => {
+        const allCategories = new Set(ideas.flatMap(idea => idea.ratingCategories || []));
+        allCategories.forEach(cat => {
             const option = document.createElement('option');
             option.value = cat;
             option.textContent = cat;
@@ -860,8 +873,10 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             let avgHtml = '';
-            for (const category in totals) {
-                avgHtml += `<p>${category}: ${(totals[category] / counts[category]).toFixed(2)}</p>`;
+            for (const category of idea.ratingCategories) {
+                if (totals[category] !== undefined) {
+                    avgHtml += `<p>${category}: ${(totals[category] / counts[category]).toFixed(2)}</p>`;
+                }
             }
             ratingsHtml += avgHtml || '<p>No ratings yet.</p>';
 
@@ -871,7 +886,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         detailModal.querySelector('#modal-idea-body').innerHTML = tagsHtml + notesHtml + ratingsHtml;
         detailModal.querySelector('#modal-idea-id').value = idea.id;
-        renderRatingSliders(detailModal.querySelector('.sliders-container'));
+        renderIdeaRatingManager(idea);
+        renderRatingSliders(detailModal.querySelector('.sliders-container'), idea.ratingCategories);
     }
     
     detailModal.addEventListener('click', (e) => {
@@ -900,7 +916,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const newRating = {};
             let ratingAdded = false;
-            ratingCategories.forEach(cat => {
+            (idea.ratingCategories || []).forEach(cat => {
                 const input = form.querySelector(`[name="rating_${cat}"]`);
                 if (input) {
                     newRating[cat] = parseInt(input.value);
@@ -954,7 +970,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const randomIdea = ideas[Math.floor(Math.random() * ideas.length)];
             recallModal.querySelector('#recall-idea-text').textContent = randomIdea.text;
             recallModal.querySelector('#recall-idea-id').value = randomIdea.id;
-            renderRatingSliders(recallModal.querySelector('.sliders-container'));
+            renderRatingSliders(recallModal.querySelector('.sliders-container'), randomIdea.ratingCategories);
             recallModal.style.display = 'block';
         } else {
             alert('No ideas to recall.');
@@ -962,7 +978,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function handleExport() {
-        const dataStr = JSON.stringify({ ideas, ratingCategories }, null, 2);
+        const dataStr = JSON.stringify({ ideas, ratingCategories: defaultRatingCategories }, null, 2);
         const dataBlob = new Blob([dataStr], {type: "application/json"});
         const url = URL.createObjectURL(dataBlob);
         const link = document.createElement('a');
@@ -983,9 +999,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     const importedData = JSON.parse(event.target.result);
                     if (Array.isArray(importedData.ideas) && Array.isArray(importedData.ratingCategories)) {
                         ideas = importedData.ideas;
-                        ratingCategories = importedData.ratingCategories;
+                        defaultRatingCategories = importedData.ratingCategories;
                         saveDB();
-                        saveRatingCategories();
+                        saveDefaultRatingCategories();
                         alert('Ideas imported successfully!');
                         showPage('all-ideas-page');
                     } else {
@@ -1004,9 +1020,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const newCategoryNameInput = document.getElementById('new-category-name');
     const ratingCategoryList = document.getElementById('rating-category-list');
     
-    function renderRatingManager() {
+    function renderDefaultRatingManager() {
         ratingCategoryList.innerHTML = '';
-        ratingCategories.forEach(cat => {
+        defaultRatingCategories.forEach(cat => {
             const li = document.createElement('li');
             li.textContent = cat;
             const deleteBtn = document.createElement('button');
@@ -1021,10 +1037,10 @@ document.addEventListener('DOMContentLoaded', function() {
     addCategoryForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const newCat = newCategoryNameInput.value.trim();
-        if (newCat && !ratingCategories.includes(newCat)) {
-            ratingCategories.push(newCat);
-            saveRatingCategories();
-            renderRatingManager();
+        if (newCat && !defaultRatingCategories.includes(newCat)) {
+            defaultRatingCategories.push(newCat);
+            saveDefaultRatingCategories();
+            renderDefaultRatingManager();
             newCategoryNameInput.value = '';
         }
     });
@@ -1032,15 +1048,58 @@ document.addEventListener('DOMContentLoaded', function() {
     ratingCategoryList.addEventListener('click', (e) => {
         if (e.target.matches('.delete-category-btn')) {
             const catToDelete = e.target.dataset.category;
-            ratingCategories = ratingCategories.filter(cat => cat !== catToDelete);
-            saveRatingCategories();
-            renderRatingManager();
+            defaultRatingCategories = defaultRatingCategories.filter(cat => cat !== catToDelete);
+            saveDefaultRatingCategories();
+            renderDefaultRatingManager();
+        }
+    });
+    
+    // --- Idea-Specific Rating Manager (in modal) ---
+    const ideaSpecificCategoryList = document.getElementById('idea-specific-category-list');
+    const addIdeaSpecificCategoryForm = document.getElementById('add-idea-specific-category-form');
+
+    function renderIdeaRatingManager(idea) {
+        ideaSpecificCategoryList.innerHTML = '';
+        (idea.ratingCategories || []).forEach(cat => {
+            const li = document.createElement('li');
+            li.textContent = cat;
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = '×';
+            deleteBtn.className = 'delete-category-btn';
+            deleteBtn.dataset.category = cat;
+            li.appendChild(deleteBtn);
+            ideaSpecificCategoryList.appendChild(li);
+        });
+    }
+    
+    addIdeaSpecificCategoryForm.addEventListener('submit', e => {
+        e.preventDefault();
+        const input = e.target.querySelector('input');
+        const newCat = input.value.trim();
+        const idea = getIdeaById(currentIdeaId);
+        if (newCat && idea && !(idea.ratingCategories || []).includes(newCat)) {
+            idea.ratingCategories.push(newCat);
+            saveDB();
+            populateDetailModal(idea); // Refresh the whole modal
+            input.value = '';
         }
     });
 
-    function renderRatingSliders(container) {
+    ideaSpecificCategoryList.addEventListener('click', e => {
+        if (e.target.matches('.delete-category-btn')) {
+            const catToDelete = e.target.dataset.category;
+            const idea = getIdeaById(currentIdeaId);
+            if (idea) {
+                idea.ratingCategories = idea.ratingCategories.filter(cat => cat !== catToDelete);
+                saveDB();
+                populateDetailModal(idea); // Refresh the whole modal
+            }
+        }
+    });
+
+    function renderRatingSliders(container, categories) {
         container.innerHTML = '';
-        ratingCategories.forEach(cat => {
+        categories.forEach(cat => {
             const label = document.createElement('label');
             label.textContent = cat;
             const range = document.createElement('input');
