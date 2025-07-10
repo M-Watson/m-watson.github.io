@@ -1,0 +1,4 @@
+---
+title: ideation
+layout: ideation
+---

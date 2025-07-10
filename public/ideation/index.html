@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Static Ideation App</title>
+    <style>
+         
+        body {
+            background-color: #ffffff;
+            color: #000000;
+            font-family: 'Georgia', serif;
+            padding: 40px;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-weight: 600;
+        }
+
+        a {
+            color: #000;
+            text-decoration: underline;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: #888;
+        }
+
+         
+        .main-content {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding-top: 60px;  
+        }
+
+        .sidebar-toggle-btn {
+            position: fixed;
+            top: 40px;
+            right: 40px;
+            z-index: 101;
+            width: 24px;
+            height: 18px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .sidebar-toggle-btn span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background-color: #999;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .sidebar-toggle-btn.open span:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .sidebar-toggle-btn.open span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .sidebar-toggle-btn.open span:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: 280px;
+            background-color: #fff;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.08);
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 100;
+            padding: 120px 40px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 30px;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .sidebar .nav-button {
+            font-size: 1.2rem;
+            color: #888;
+            padding: 0;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .sidebar .nav-button:hover {
+            color: #000;
+        }
+
+         
+        .page {
+            display: none;  
+        }
+        .page.active {
+            display: block;  
+        }
+
+         
+        #landing-page {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 15vh;
+        }
+
+        .idea-form-container {
+            width: 100%;
+            max-width: 650px;
+        }
+
+        #idea-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #idea-textarea {
+            width: 100%;
+            border: none;
+            outline: none;
+            resize: none;
+            background-color: transparent;
+            font-size: 2.2rem;
+            line-height: 1.5;
+            text-align: center;
+            overflow-y: hidden;
+            color: #000;
+            font-family: 'Georgia', serif;
+        }
+
+        #idea-textarea::placeholder {
+            color: #ccc;
+        }
+        
+        #idea-tags-input {
+            width: 80%;
+            border: none;
+            border-bottom: 1px dashed #ccc;
+            background: transparent;
+            text-align: center;
+            font-size: 1rem;
+            margin-top: 20px;
+            padding: 8px 0;
+            font-family: 'Georgia', serif;
+            color: #888;
+        }
+        #idea-tags-input:focus {
+            outline: none;
+            border-bottom-color: #000;
+        }
+
+        #submit-wrapper {
+            margin-top: calc(1.5em * 2);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        #submit-idea-btn {
+            background: none;
+            border: 1px solid #ddd;
+            color: #999;
+            padding: 8px 30px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        #submit-idea-btn:hover {
+            border-color: #000;
+            color: #000;
+        }
+
+         
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            flex-grow: 1;
+        }
+        
+        .page-header .header-buttons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .filter-bar {
+            padding: 20px 0;
+            margin-bottom: 40px;
+            max-height: 500px;  
+            transition: all 0.5s ease-in-out;
+            overflow: hidden;
+        }
+
+        .filter-bar.filter-bar--hidden {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-bottom: 0;
+            overflow: hidden;
+        }
+
+        .filter-bar form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            align-items: flex-end;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .filter-group label {
+            font-size: 0.8rem;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #888;
+            text-transform: uppercase;
+        }
+        .filter-group input, .filter-group select {
+            background: none;
+            border: none;
+            border-bottom: 1px solid #ddd;
+            border-radius: 0;
+            padding: 8px 0;
+            font-size: 1rem;
+            font-family: 'Georgia', serif;
+        }
+        .filter-group input:focus, .filter-group select:focus {
+            outline: none;
+            border-bottom-color: #000;
+        }
+        .checkbox-label {
+            flex-direction: row;
+            align-items: center;
+            font-size: 1rem;
+            font-family: 'Georgia', serif;
+            color: #000;
+            text-transform: none;
+        }
+        .filter-group-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+         
+        .ideas-container {
+            transition: all 0.5s ease-in-out;
+            max-height: 10000px;  
+            overflow: hidden;
+        }
+
+        .ideas-container.ideas-container--hidden {
+            max-height: 0;
+            overflow: hidden;
+        }
+        
+        .ideas-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        .idea-card {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+            cursor: pointer;
+        }
+        .idea-card h3 {
+            font-size: 1.8rem;
+            font-family: 'Georgia', serif;
+            font-weight: normal;
+            margin: 0 0 10px 0;
+        }
+        .idea-date {
+            font-size: 0.8rem;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #999;
+            margin-top: 10px;
+        }
+        .idea-tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        .idea-tag {
+            display: inline-block;
+            background-color: #f5f5f5;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #888;
+        }
+
+         
+        .modal {
+            display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 40px;
+            border: 1px solid #eee;
+            width: 90%;
+            max-width: 550px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .close-btn {
+            color: #ccc; float: right; font-size: 28px; font-weight: bold;
+        }
+        .close-btn:hover, .close-btn:focus {
+            color: black; text-decoration: none; cursor: pointer;
+        }
+        .modal-content h2 {
+            margin-top: 0;
+        }
+        .modal-content p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+        .modal-content textarea, .modal-content input[type="text"] {
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+            border: 1px solid #eee;
+            padding: 15px;
+            font-size: 1rem;
+            font-family: 'Georgia', serif;
+            background: #fafafa;
+        }
+        .modal-content textarea {
+            min-height: 100px;
+        }
+        .modal-content textarea:focus, .modal-content input[type="text"]:focus {
+            outline: none;
+            border-color: #ccc;
+            background: #fff;
+        }
+        .modal-expand-section, .modal-footer {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #eee;
+        }
+        .modal-expand-section h4 {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .sliders label {
+            display: block; margin-top: 15px; margin-bottom: 8px; font-size: 0.9rem; color: #666; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .sliders input[type="range"] {
+            width: 100%;
+        }
+
+         
+        #json-editor {
+            width: 100%;
+            height: 60vh;
+            font-family: monospace;
+            font-size: 0.9rem;
+            border: 1px solid #eee;
+            padding: 15px;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+
+         
+        button, .btn-primary, .btn-secondary, .btn-danger {
+            background: none;
+            border: 1px solid #ccc;
+            color: #888;
+            padding: 10px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        button:hover, .btn-primary:hover, .btn-secondary:hover, .btn-danger:hover {
+            border-color: #000;
+            color: #000;
+        }
+        .btn-danger {
+            border-color: #f1b0b0;
+            color: #d9534f;
+        }
+        .btn-danger:hover {
+            background-color: #d9534f;
+            border-color: #d9534f;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="sidebar-toggle" class="sidebar-toggle-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <div id="sidebar" class="sidebar">
+        <button id="nav-new-idea" class="nav-button">New Idea</button>
+        <button id="nav-all-ideas" class="nav-button">All Ideas</button>
+        <button id="nav-recall" class="nav-button">Recall Idea</button>
+        <button id="nav-view-json" class="nav-button">View/Edit JSON</button>
+        <button id="nav-import" class="nav-button">Import</button>
+        <button id="nav-export" class="nav-button">Export</button>
+        <input type="file" id="import-file-input" style="display: none;" accept=".json">
+    </div>
+
+    
+    <div id="landing-page" class="page active">
+        <div class="idea-form-container">
+            <form id="idea-form">
+                <textarea id="idea-textarea" name="idea" placeholder="Start typing your idea..." rows="1" autocomplete="off"></textarea>
+                <input type="text" id="idea-tags-input" placeholder="Add tags, comma separated...">
+                <div id="submit-wrapper">
+                    <button type="submit" id="submit-idea-btn">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <div id="all-ideas-page" class="page">
+        <div class="main-content">
+            <div class="page-header">
+                <h1>All Ideas</h1>
+                <div class="header-buttons">
+                    <button id="toggle-ideas-btn" class="nav-button">Show Ideas</button>
+                    <button id="toggle-filter-btn" class="nav-button">Show Filters</button>
+                </div>
+            </div>
+            <div class="filter-bar filter-bar--hidden">
+                <form id="filter-form">
+                    <div class="filter-group">
+                        <label>Rating</label>
+                        <select name="rating_metric">
+                            <option value="">--</option>
+                            <option value="likeability">Likeability</option>
+                            <option value="size">Size</option>
+                            <option value="profitability">Profitability</option>
+                        </select>
+                        <select name="rating_direction">
+                            <option value="above">Above</option>
+                            <option value="below">Below</option>
+                        </select>
+                        <input type="number" name="rating_value" placeholder="Value" min="1" max="100" style="width: 80px;">
+                    </div>
+                    <div class="filter-group">
+                        <label>Date</label>
+                        <input type="date" name="start_date">
+                        <input type="date" name="end_date">
+                    </div>
+                    <div class="filter-group">
+                        <label>Tags</label>
+                        <input type="text" name="tags" placeholder="e.g. project, urgent">
+                    </div>
+                    <div class="filter-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="has_notes" value="true"> Has Notes
+                        </label>
+                    </div>
+                    <div class="filter-group-buttons">
+                        <button type="submit">Filter</button>
+                        <button type="button" id="clear-filters-btn" class="btn-secondary">Clear</button>
+                    </div>
+                </form>
+            </div>
+            <div class="ideas-container ideas-container--hidden">
+                <div class="ideas-grid" id="ideas-grid-container">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div id="json-editor-page" class="page">
+        <div class="main-content">
+            <div class="page-header">
+                <h1>Edit JSON Data</h1>
+            </div>
+            <textarea id="json-editor"></textarea>
+            <button id="save-json-btn" style="margin-top: 20px;">Save JSON</button>
+        </div>
+    </div>
+
+    
+    <div id="idea-detail-modal" class="modal"><div class="modal-content"><span class="close-btn">&times;</span><h2 id="modal-idea-title"></h2><div id="modal-idea-body"></div><div class="modal-expand-section"><h4>Add to this Idea</h4><form id="expand-form-in-modal"><input type="hidden" id="modal-idea-id" name="idea_id"><textarea name="notes" placeholder="Add a new note..."></textarea><input type="text" name="tags" placeholder="Add new tags, comma separated..."><div class="sliders"><label>Likeability</label><input type="range" name="likeability" min="1" max="100" value="50"><label>Size</label><input type="range" name="size" min="1" max="100" value="50"><label>Profitability</label><input type="range" name="profitability" min="1" max="100" value="50"></div><button type="submit">Save Addition</button></form></div><div class="modal-footer"><button id="modal-delete-btn" class="btn-danger">DELETE</button></div></div></div>
+    <div id="confirm-modal" class="modal"><div class="modal-content"><h4>Confirm Deletion</h4><p>Are you sure you want to delete this idea and all its associated data? This action cannot be undone.</p><div class="confirm-buttons"><button id="confirm-delete-btn" class="btn-danger">Yes, Delete</button><button id="cancel-delete-btn" class="btn-secondary">Cancel</button></div></div></div>
+    <div id="recall-modal" class="modal"><div class="modal-content"><span class="close-btn">&times;</span><h2>Recall & Expand</h2><p id="recall-idea-text"></p><form id="recall-expand-form"><input type="hidden" id="recall-idea-id" name="idea_id"><textarea name="notes" placeholder="Expand on this idea..."></textarea><input type="text" name="tags" placeholder="Add new tags, comma separated..."><div class="sliders"><label>Likeability</label><input type="range" name="likeability" min="1" max="100" value="50"><label>Size</label><input type="range" name="size" min="1" max="100" value="50"><label>Profitability</label><input type="range" name="profitability" min="1" max="100" value="50"></div><button type="submit">Save Expansion</button></form></div></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const DB_KEY = 'ideation_app_data';
+
+    
+    let ideas = [];
+    
+    function loadDB() {
+        const data = localStorage.getItem(DB_KEY);
+        try {
+            ideas = data ? JSON.parse(data) : [];
+            if (!Array.isArray(ideas)) ideas = [];
+        } catch (e) {
+            ideas = [];
+        }
+    }
+
+    function saveDB() {
+        localStorage.setItem(DB_KEY, JSON.stringify(ideas));
+    }
+
+    function getIdeaById(id) {
+        return ideas.find(idea => idea.id === id);
+    }
+
+    function parseTags(tagsString) {
+        if (!tagsString) return [];
+        return tagsString.split(',').map(tag => tag.trim()).filter(tag => tag);
+    }
+
+    
+    const pages = document.querySelectorAll('.page');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const fileInput = document.getElementById('import-file-input');
+    const jsonEditor = document.getElementById('json-editor');
+    const saveJsonBtn = document.getElementById('save-json-btn');
+
+    sidebarToggle.onclick = () => {
+        sidebar.classList.toggle('open');
+        sidebarToggle.classList.toggle('open');
+    };
+
+    function showPage(pageId) {
+        pages.forEach(page => {
+            page.classList.toggle('active', page.id === pageId);
+        });
+        if (pageId === 'all-ideas-page') {
+            renderIdeas();
+        }
+        if (pageId === 'json-editor-page') {
+            jsonEditor.value = JSON.stringify(ideas, null, 2);
+        }
+    }
+
+    sidebar.addEventListener('click', (e) => {
+        if (!e.target.matches('.nav-button')) return;
+
+        const buttonId = e.target.id;
+
+        if (buttonId === 'nav-new-idea') showPage('landing-page');
+        if (buttonId === 'nav-all-ideas') showPage('all-ideas-page');
+        if (buttonId === 'nav-view-json') showPage('json-editor-page');
+        if (buttonId === 'nav-recall') handleRecall();
+        if (buttonId === 'nav-import') fileInput.click();
+        if (buttonId === 'nav-export') handleExport();
+
+        sidebar.classList.remove('open');
+        sidebarToggle.classList.remove('open');
+    });
+
+    saveJsonBtn.onclick = () => {
+        try {
+            const newData = JSON.parse(jsonEditor.value);
+            if (Array.isArray(newData)) {
+                ideas = newData;
+                saveDB();
+                alert('JSON data saved successfully!');
+                showPage('all-ideas-page');
+            } else {
+                alert('Invalid JSON format. Data must be an array.');
+            }
+        } catch (e) {
+            alert('Error parsing JSON: ' + e.message);
+        }
+    };
+
+
+    
+    const ideaTextarea = document.getElementById('idea-textarea');
+    const ideaTagsInput = document.getElementById('idea-tags-input');
+    const submitWrapper = document.getElementById('submit-wrapper');
+    const ideaForm = document.getElementById('idea-form');
+
+    ideaTextarea.addEventListener('input', () => {
+        ideaTextarea.style.height = 'auto';
+        ideaTextarea.style.height = ideaTextarea.scrollHeight + 'px';
+        submitWrapper.style.opacity = ideaTextarea.value.length > 0 ? '1' : '0';
+    });
+
+    ideaForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = ideaTextarea.value.trim();
+        if (text) {
+            const newIdea = {
+                id: Date.now(),
+                text: text,
+                timestamp: new Date().toISOString(),
+                notes: [],
+                ratings: [],
+                tags: parseTags(ideaTagsInput.value)
+            };
+            ideas.push(newIdea);
+            saveDB();
+            ideaForm.reset();
+            ideaTextarea.style.height = 'auto';
+            submitWrapper.style.opacity = '0';
+            showPage('all-ideas-page');
+        }
+    });
+
+    
+    const ideasGridContainer = document.getElementById('ideas-grid-container');
+    const filterForm = document.getElementById('filter-form');
+    const clearFiltersBtn = document.getElementById('clear-filters-btn');
+    const toggleFilterBtn = document.getElementById('toggle-filter-btn');
+    const filterBar = document.querySelector('.filter-bar');
+    const toggleIdeasBtn = document.getElementById('toggle-ideas-btn');
+    const ideasContainer = document.querySelector('.ideas-container');
+
+    toggleFilterBtn.onclick = () => {
+        filterBar.classList.toggle('filter-bar--hidden');
+        toggleFilterBtn.textContent = filterBar.classList.contains('filter-bar--hidden') ? 'Show Filters' : 'Hide Filters';
+    };
+
+    toggleIdeasBtn.onclick = () => {
+        ideasContainer.classList.toggle('ideas-container--hidden');
+        toggleIdeasBtn.textContent = ideasContainer.classList.contains('ideas-container--hidden') ? 'Show Ideas' : 'Hide Ideas';
+    };
+
+    function renderIdeas(filteredIdeas = ideas) {
+        ideasGridContainer.innerHTML = '';
+        if (filteredIdeas.length === 0) {
+            ideasGridContainer.innerHTML = '<p style="text-align: center;">No ideas found. <a href="#" id="clear-filters-link">Clear filters</a> to see all ideas.</p>';
+            const clearLink = document.getElementById('clear-filters-link');
+            if(clearLink) clearLink.onclick = (e) => { e.preventDefault(); filterForm.reset(); renderIdeas(); };
+            return;
+        }
+
+        filteredIdeas.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        filteredIdeas.forEach(idea => {
+            const ideaCard = document.createElement('div');
+            ideaCard.className = 'idea-card';
+            ideaCard.dataset.id = idea.id;
+            const tagsHtml = (idea.tags || []).map(tag => `<span class="idea-tag">${tag}</span>`).join('');
+            ideaCard.innerHTML = `
+                <div class="card-content">
+                    <h3>${idea.text}</h3>
+                    <div class="idea-tags-container">${tagsHtml}</div>
+                    <small class="idea-date">Submitted: ${new Date(idea.timestamp).toLocaleDateString()}</small>
+                </div>
+            `;
+            ideasGridContainer.appendChild(ideaCard);
+        });
+    }
+    
+    filterForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const filters = new FormData(e.target);
+        const filtered = ideas.filter(idea => {
+            const startDate = filters.get('start_date');
+            const endDate = filters.get('end_date');
+            const ideaDate = new Date(idea.timestamp);
+            if (startDate && ideaDate < new Date(startDate)) return false;
+            if (endDate && ideaDate > new Date(new Date(endDate).getTime() + 86400000)) return false;
+
+            if (filters.get('has_notes') && idea.notes.length === 0) return false;
+
+            const filterTagsInput = filters.get('tags').trim();
+            if (filterTagsInput) {
+                const filterTags = parseTags(filterTagsInput).map(t => t.toLowerCase());
+                const ideaTagsLower = (idea.tags || []).map(t => t.toLowerCase());
+                if (!filterTags.every(ft => ideaTagsLower.includes(ft))) return false;
+            }
+
+            const metric = filters.get('rating_metric');
+            const direction = filters.get('rating_direction');
+            const value = parseFloat(filters.get('rating_value'));
+            if (metric && !isNaN(value)) {
+                if (idea.ratings.length === 0) return false;
+                const avg = idea.ratings.reduce((sum, r) => sum + r[metric], 0) / idea.ratings.length;
+                if (direction === 'above' && avg < value) return false;
+                if (direction === 'below' && avg > value) return false;
+            }
+
+            return true;
+        });
+        renderIdeas(filtered);
+    });
+
+    clearFiltersBtn.onclick = () => {
+        filterForm.reset();
+        renderIdeas();
+    };
+
+    
+    const detailModal = document.getElementById('idea-detail-modal');
+    const confirmModal = document.getElementById('confirm-modal');
+    const recallModal = document.getElementById('recall-modal');
+    let currentIdeaId = null;
+
+    ideasGridContainer.addEventListener('click', (e) => {
+        const card = e.target.closest('.idea-card');
+        if (card) {
+            currentIdeaId = parseInt(card.dataset.id);
+            const idea = getIdeaById(currentIdeaId);
+            if (idea) {
+                populateDetailModal(idea);
+                detailModal.style.display = 'block';
+            }
+        }
+    });
+
+    function populateDetailModal(idea) {
+        detailModal.querySelector('#modal-idea-title').textContent = idea.text;
+        
+        let tagsHtml = '<h4>Tags:</h4><div class="idea-tags-container">';
+        tagsHtml += (idea.tags && idea.tags.length > 0) ? idea.tags.map(tag => `<span class="idea-tag">${tag}</span>`).join('') : '<p>No tags yet.</p>';
+        tagsHtml += '</div>';
+
+        let notesHtml = '<h4>Notes:</h4><ul>';
+        notesHtml += idea.notes.length > 0 ? idea.notes.map(note => `<li>${note.text}</li>`).join('') : '<li>No additional notes.</li>';
+        notesHtml += '</ul>';
+
+        let ratingsHtml = '<h4>Average Ratings:</h4>';
+        if (idea.ratings.length > 0) {
+            const avgLike = idea.ratings.reduce((s, r) => s + r.likeability, 0) / idea.ratings.length;
+            const avgSize = idea.ratings.reduce((s, r) => s + r.size, 0) / idea.ratings.length;
+            const avgProfit = idea.ratings.reduce((s, r) => s + r.profitability, 0) / idea.ratings.length;
+            ratingsHtml += `<p>Likeability: ${avgLike.toFixed(2)}</p><p>Size: ${avgSize.toFixed(2)}</p><p>Profitability: ${avgProfit.toFixed(2)}</p>`;
+        } else {
+            ratingsHtml += '<p>No ratings yet.</p>';
+        }
+        
+        detailModal.querySelector('#modal-idea-body').innerHTML = tagsHtml + notesHtml + ratingsHtml;
+        detailModal.querySelector('#modal-idea-id').value = idea.id;
+    }
+    
+    function handleIdeaUpdate(form) {
+        const ideaId = parseInt(form.idea_id.value);
+        const idea = getIdeaById(ideaId);
+        if (idea) {
+            const notes = form.notes.value.trim();
+            if (notes) idea.notes.push({ text: notes });
+
+            const newTags = parseTags(form.tags.value);
+            if (newTags.length > 0) {
+                idea.tags = [...new Set([...(idea.tags || []), ...newTags])];
+            }
+
+            idea.ratings.push({
+                likeability: parseInt(form.likeability.value),
+                size: parseInt(form.size.value),
+                profitability: parseInt(form.profitability.value)
+            });
+            saveDB();
+            form.reset();
+            return true;
+        }
+        return false;
+    }
+
+    document.getElementById('expand-form-in-modal').addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (handleIdeaUpdate(e.target)) {
+            detailModal.style.display = 'none';
+            renderIdeas();
+        }
+    });
+    
+    document.getElementById('recall-expand-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (handleIdeaUpdate(e.target)) {
+            recallModal.style.display = 'none';
+        }
+    });
+
+    document.getElementById('modal-delete-btn').onclick = () => {
+        if (currentIdeaId) {
+            detailModal.style.display = 'none';
+            confirmModal.style.display = 'block';
+        }
+    };
+    document.getElementById('confirm-delete-btn').onclick = () => {
+        ideas = ideas.filter(idea => idea.id !== currentIdeaId);
+        saveDB();
+        confirmModal.style.display = 'none';
+        renderIdeas();
+    };
+    document.getElementById('cancel-delete-btn').onclick = () => confirmModal.style.display = 'none';
+    
+    function handleRecall() {
+        loadDB(); 
+        if (ideas.length > 0) {
+            const randomIdea = ideas[Math.floor(Math.random() * ideas.length)];
+            recallModal.querySelector('#recall-idea-text').textContent = randomIdea.text;
+            recallModal.querySelector('#recall-idea-id').value = randomIdea.id;
+            recallModal.style.display = 'block';
+        } else {
+            alert('No ideas to recall.');
+        }
+    }
+    
+    function handleExport() {
+        const dataStr = JSON.stringify(ideas, null, 2);
+        const dataBlob = new Blob([dataStr], {type: "application/json"});
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'ideation_backup.json';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
+    fileInput.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const importedIdeas = JSON.parse(event.target.result);
+                    if (Array.isArray(importedIdeas)) {
+                        ideas = importedIdeas;
+                        saveDB();
+                        alert('Ideas imported successfully!');
+                        showPage('all-ideas-page');
+                    } else {
+                        alert('Invalid JSON file format.');
+                    }
+                } catch (error) {
+                    alert('Error parsing JSON file.');
+                }
+            };
+            reader.readAsText(file);
+        }
+    };
+    
+    [detailModal, confirmModal, recallModal].forEach(modal => {
+        if(modal) {
+            const closeBtn = modal.querySelector('.close-btn');
+            if (closeBtn) {
+                closeBtn.onclick = () => modal.style.display = 'none';
+            }
+        }
+    });
+    window.onclick = (event) => {
+        if (event.target == detailModal) detailModal.style.display = 'none';
+        if (event.target == confirmModal) confirmModal.style.display = 'none';
+        if (event.target == recallModal) recallModal.style.display = 'none';
+    };
+
+    
+    loadDB();
+});
+</script>
+</body>
+</html>
