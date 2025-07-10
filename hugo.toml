@@ -1,7 +1,0 @@
-theme = 'papermod'
-languageCode = 'en-us'
-title = 'M-Watson'
-[params]
-    subtitle = 'A blog'
-    [params.social]
-        fediverse_creator= "@mwatson@mas.to" 
