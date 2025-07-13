@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tower of Hanoi</title>
+    <style>
+        /* General Styling */
+        :root {
+            --bg-color: #f4f4f9;
+            --text-color: #333;
+            --tower-color: #dcdce6;
+            --tower-base-color: #b0b0c0;
+            --accent-color: #5b21b6; /* A deep purple */
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        header, main {
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+        }
+
+        /* Controls */
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        input[type="number"], button {
+            font-family: inherit;
+            font-size: 1rem;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            transition: all 0.2s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(91, 33, 182, 0.2);
+        }
+        
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        /* Game Area */
+        #game-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            width: 100%;
+            height: 350px;
+            margin: 20px auto;
+        }
+
+        .tower {
+            flex: 1;
+            display: flex;
+            flex-direction: column-reverse; /* Stacks disks from bottom-up */
+            align-items: center;
+            margin: 0 10px;
+            padding-bottom: 10px;
+            background: linear-gradient(to right, transparent 49.5%, var(--tower-color) 49.5%, var(--tower-color) 50.5%, transparent 50.5%);
+            border-bottom: 10px solid var(--tower-base-color);
+            border-radius: 5px;
+            min-height: 300px; /* Ensure tower has height even when empty */
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .tower:hover {
+            background-color: #e8e6ff;
+        }
+
+        /* Disks */
+        .disk {
+            height: 30px;
+            margin-bottom: 2px;
+            border-radius: 8px;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px; /* Smallest disk width */
+        }
+
+        .disk.held {
+            opacity: 0.7;
+            transform: translateY(-380px); /* Lifts the disk above the towers */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        #message {
+            font-size: 1.2rem;
+            font-weight: 500;
+            min-height: 2em; /* Prevents layout shift */
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Tower of Hanoi</h1>
+        <p>Move all disks from the source tower to a destination tower. <br>You can only move one disk at a time and cannot place a larger disk onto a smaller one.</p>
+    </header>
+
+    <main>
+        <div class="controls">
+            <label for="disks">Disks:</label>
+            <input type="number" id="disks" value="4" min="2" max="10">
+            <label for="towers">Towers:</label>
+            <input type="number" id="towers" value="3" min="3" max="10">
+            <button id="startBtn">New Game</button>
+        </div>
+
+        <div id="game-container"></div>
+        <p id="message">Moves: 0</p>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const startBtn = document.getElementById('startBtn');
+            const disksInput = document.getElementById('disks');
+            const towersInput = document.getElementById('towers');
+            const gameContainer = document.getElementById('game-container');
+            const messageEl = document.getElementById('message');
+
+            let numDisks;
+            let numTowers;
+            let towersState = []; // Data representation of the towers
+            let heldDisk = null; // { size: number, element: HTMLElement }
+            let sourceTowerIndex = null;
+            let moves = 0;
+            let isGameWon = false;
+
+            /**
+             * Generates a pleasant color for a disk based on its size.
+             * @param {number} i The disk's size index.
+             * @param {number} total The total number of disks.
+             * @returns {string} An HSL color string.
+             */
+            function createColor(i, total) {
+                const hue = 250 + (i / total) * 110; // From purple to pink/red
+                return `hsl(${hue}, 70%, 60%)`;
+            }
+
+            /**
+             * Initializes or resets the game board.
+             */
+            function initGame() {
+                numDisks = parseInt(disksInput.value, 10);
+                numTowers = parseInt(towersInput.value, 10);
+                
+                // Reset state
+                towersState = Array.from({ length: numTowers }, () => []);
+                heldDisk = null;
+                sourceTowerIndex = null;
+                moves = 0;
+                isGameWon = false;
+                updateMessage(`Moves: 0`);
+                gameContainer.innerHTML = '';
+
+                // Create tower DOM elements
+                for (let i = 0; i < numTowers; i++) {
+                    const towerEl = document.createElement('div');
+                    towerEl.classList.add('tower');
+                    towerEl.dataset.index = i;
+                    towerEl.addEventListener('click', handleTowerClick);
+                    gameContainer.appendChild(towerEl);
+                }
+
+                // Create disk data and DOM elements on the first tower
+                const firstTowerEl = gameContainer.children[0];
+                for (let i = numDisks; i > 0; i--) {
+                    towersState[0].push(i);
+                    const diskEl = document.createElement('div');
+                    diskEl.classList.add('disk');
+                    diskEl.dataset.size = i;
+                    // Width is relative to the container for responsiveness
+                    diskEl.style.width = `${30 + i * 6}%`; 
+                    diskEl.style.backgroundColor = createColor(i, numDisks);
+                    diskEl.textContent = i;
+                    firstTowerEl.appendChild(diskEl);
+                }
+            }
+            
+            /**
+             * Handles all click events on towers for game logic.
+             * @param {Event} e The click event.
+             */
+            function handleTowerClick(e) {
+                if (isGameWon) return; // Prevent moves after winning
+
+                const clickedTowerIndex = parseInt(e.currentTarget.dataset.index, 10);
+                
+                if (heldDisk === null) {
+                    // 1. Pick up a disk
+                    if (towersState[clickedTowerIndex].length > 0) {
+                        sourceTowerIndex = clickedTowerIndex;
+                        const diskSize = towersState[clickedTowerIndex].pop();
+                        const diskElement = e.currentTarget.lastElementChild;
+                        
+                        heldDisk = { size: diskSize, element: diskElement };
+                        diskElement.classList.add('held');
+                    }
+                } else {
+                    // 2. Place a disk
+                    const destinationTowerState = towersState[clickedTowerIndex];
+                    const topDiskSize = destinationTowerState.length > 0 ? destinationTowerState[destinationTowerState.length - 1] : Infinity;
+
+                    if (heldDisk.size < topDiskSize) {
+                        // Valid move
+                        destinationTowerState.push(heldDisk.size);
+                        document.querySelector(`.tower[data-index='${clickedTowerIndex}']`).appendChild(heldDisk.element);
+                        
+                        moves++;
+                        updateMessage(`Moves: ${moves}`);
+                        heldDisk.element.classList.remove('held');
+                        heldDisk = null; // Clear held disk
+                        
+                        checkWin();
+                    } else {
+                        // Invalid move: return disk to its original tower
+                        towersState[sourceTowerIndex].push(heldDisk.size);
+                        document.querySelector(`.tower[data-index='${sourceTowerIndex}']`).appendChild(heldDisk.element);
+                        heldDisk.element.classList.remove('held');
+                        heldDisk = null; // Clear held disk
+                        
+                        flashMessage('Invalid Move!');
+                    }
+                }
+            }
+
+            /**
+             * Checks if the game has been won.
+             * A win occurs if all disks are on any tower other than the first one.
+             */
+            function checkWin() {
+                for (let i = 1; i < numTowers; i++) {
+                    if (towersState[i].length === numDisks) {
+                        isGameWon = true;
+                        let winText = `🎉 You won in ${moves} moves!`;
+                        if (numTowers === 3) {
+                            const optimalMoves = Math.pow(2, numDisks) - 1;
+                            winText += ` (Optimal: ${optimalMoves})`;
+                        }
+                        updateMessage(winText);
+                        break;
+                    }
+                }
+            }
+            
+            /**
+             * Updates the message text.
+             * @param {string} text The message to display.
+             */
+            function updateMessage(text) {
+                messageEl.textContent = text;
+            }
+
+            /**
+             * Displays a temporary message and then reverts to the move count.
+             * @param {string} text The temporary message.
+             */
+            function flashMessage(text) {
+                messageEl.textContent = text;
+                messageEl.style.color = '#d90429'; // Error color
+                setTimeout(() => {
+                    messageEl.textContent = `Moves: ${moves}`;
+                    messageEl.style.color = 'var(--text-color)';
+                }, 1200);
+            }
+            
+            startBtn.addEventListener('click', initGame);
+
+            // Start the first game on page load
+            initGame();
+        });
+    </script>
+
+</body>
+</html>
