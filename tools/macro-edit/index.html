@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Image Text Overlay Editor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lobster&family=Pacifico&family=Roboto+Mono&family=Anton&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; /* Prevent body scroll */
+        }
+        canvas {
+            display: block;
+            border-radius: 0.5rem;
+        }
+        .sidebar {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(0);
+        }
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+        #sidebar-toggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 50;
+            transition: left 0.3s ease-in-out;
+        }
+        .control-panel, .image-panel, .canvas-panel {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .control-panel.disabled, .image-panel.disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="flex h-screen">
+        <!-- Left Panel: Controls -->
+        <div id="sidebar" class="sidebar w-80 bg-white p-6 shadow-lg overflow-y-auto flex-shrink-0">
+            <h1 class="text-2xl font-bold mb-2 text-gray-900">Editor</h1>
+            <p class="text-sm text-gray-500 mb-6">Create your composition.</p>
+
+            <div class="space-y-4">
+                <label for="image-loader" class="w-full text-center bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 cursor-pointer transition-colors block">
+                    Add Image
+                </label>
+                <input type="file" id="image-loader" class="hidden" accept="image/*" multiple/>
+                 <button id="add-text-btn" class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors">
+                    Add Text Box
+                </button>
+            </div>
+            
+            <hr class="my-6 border-gray-200">
+            
+            <!-- Canvas Settings -->
+            <div id="canvas-panel" class="canvas-panel space-y-4">
+                 <h2 class="text-xl font-bold text-gray-800">Canvas Settings</h2>
+                 <div>
+                    <label for="background-color-input" class="text-sm font-medium mb-1 text-gray-600 block">Background Color</label>
+                    <input type="color" id="background-color-input" value="#e5e7eb" class="w-full h-10 p-1 border border-gray-300 rounded-md cursor-pointer">
+                </div>
+                 <div class="flex items-center">
+                    <input type="checkbox" id="transparent-bg-checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                    <label for="transparent-bg-checkbox" class="ml-2 block text-sm text-gray-900">Transparent Background</label>
+                </div>
+            </div>
+
+            <hr class="my-6 border-gray-200">
+
+            <!-- Image Properties -->
+            <div id="image-panel" class="image-panel disabled space-y-4">
+                 <h2 class="text-xl font-bold text-gray-800">Image Properties</h2>
+                 <div>
+                    <label for="image-size-input" class="text-sm font-medium mb-1 text-gray-600 block">Scale</label>
+                    <input type="range" id="image-size-input" min="10" max="200" value="100" class="w-full">
+                </div>
+                 <div>
+                    <label for="image-filter-select" class="text-sm font-medium mb-1 text-gray-600 block">Filter</label>
+                    <select id="image-filter-select" class="w-full p-2 border border-gray-300 rounded-md">
+                        <option value="none">None</option>
+                        <option value="bw">Black & White</option>
+                        <option value="blur">Blur</option>
+                        <option value="glitch">Glitch</option>
+                        <option value="cartoon">Cartoon</option>
+                    </select>
+                </div>
+                <button id="delete-image-btn" class="w-full bg-red-600 text-white font-bold py-2 px-4 rounded-md hover:bg-red-700 transition-colors">
+                    Delete Image
+                </button>
+            </div>
+
+            <hr class="my-6 border-gray-200">
+
+            <!-- Contextual Controls for Selected Text -->
+            <div id="control-panel" class="control-panel disabled space-y-4">
+                <h2 class="text-xl font-bold text-gray-800">Text Properties</h2>
+                <div>
+                    <label for="text-input" class="text-sm font-medium mb-1 text-gray-600 block">Text</label>
+                    <textarea id="text-input" rows="3" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+                <div>
+                    <label for="font-size-input" class="text-sm font-medium mb-1 text-gray-600 block">Font Size</label>
+                    <input type="range" id="font-size-input" min="10" max="300" value="50" class="w-full">
+                </div>
+                 <div>
+                    <label for="rotation-input" class="text-sm font-medium mb-1 text-gray-600 block">Rotation</label>
+                    <input type="range" id="rotation-input" min="-180" max="180" value="0" class="w-full">
+                </div>
+                <div>
+                    <label for="color-picker" class="text-sm font-medium mb-1 text-gray-600 block">Color</label>
+                    <input type="color" id="color-picker" value="#000000" class="w-full h-10 p-1 border border-gray-300 rounded-md cursor-pointer">
+                </div>
+                <div>
+                    <label for="font-style-select" class="text-sm font-medium mb-1 text-gray-600 block">Font Style</label>
+                    <select id="font-style-select" class="w-full p-2 border border-gray-300 rounded-md">
+                        <option value="Arial">Arial</option>
+                        <option value="Verdana">Verdana</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Courier New">Courier New</option>
+                        <option value="Impact">Impact</option>
+                        <option value="Lobster" style="font-family: 'Lobster', cursive;">Lobster</option>
+                        <option value="Pacifico" style="font-family: 'Pacifico', cursive;">Pacifico</option>
+                        <option value="Roboto Mono" style="font-family: 'Roboto Mono', monospace;">Roboto Mono</option>
+                        <option value="Anton" style="font-family: 'Anton', sans-serif;">Anton</option>
+                        <option value="Bebas Neue" style="font-family: 'Bebas Neue', cursive;">Bebas Neue</option>
+                    </select>
+                </div>
+                 <div>
+                    <label for="outline-color-picker" class="text-sm font-medium mb-1 text-gray-600 block">Outline Color</label>
+                    <input type="color" id="outline-color-picker" value="#ffffff" class="w-full h-10 p-1 border border-gray-300 rounded-md cursor-pointer">
+                </div>
+                <div>
+                    <label for="outline-width-input" class="text-sm font-medium mb-1 text-gray-600 block">Outline Width</label>
+                    <input type="range" id="outline-width-input" min="0" max="20" value="0" class="w-full">
+                </div>
+                <button id="delete-text-btn" class="w-full bg-red-600 text-white font-bold py-2 px-4 rounded-md hover:bg-red-700 transition-colors">
+                    Delete Text
+                </button>
+            </div>
+            
+            <div class="mt-8">
+                 <h2 class="text-xl font-bold text-gray-800 mb-4">Export Options</h2>
+                 <div class="space-y-4">
+                    <div>
+                        <label for="export-size-select" class="text-sm font-medium mb-1 text-gray-600 block">Export Size (Longest Side)</label>
+                        <select id="export-size-select" class="w-full p-2 border border-gray-300 rounded-md">
+                            <option value="original">Original Size</option>
+                            <option value="2048">Extra Large (2048px)</option>
+                            <option value="1080">Large (1080px)</option>
+                            <option value="720">Medium (720px)</option>
+                            <option value="480">Small (480px)</option>
+                        </select>
+                    </div>
+                    <button id="export-png-button" class="w-full bg-green-600 text-white font-bold py-2 px-4 rounded-md hover:bg-green-700 transition-colors disabled:bg-gray-400">
+                        Export as PNG
+                    </button>
+                 </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Canvas -->
+        <div id="canvas-container" class="flex-grow flex items-center justify-center bg-gray-200 p-4 overflow-auto relative">
+             <button id="sidebar-toggle" class="absolute top-4 left-4 bg-white p-2 rounded-full shadow-md z-10">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <canvas id="image-canvas"></canvas>
+        </div>
+    </div>
+
+    <script>
+    // --- DOM Element References ---
+    const imageLoader = document.getElementById('image-loader');
+    const addTextBtn = document.getElementById('add-text-btn');
+    const exportPngButton = document.getElementById('export-png-button');
+    const canvas = document.getElementById('image-canvas');
+    const canvasContainer = document.getElementById('canvas-container');
+    const ctx = canvas.getContext('2d');
+    const controlPanel = document.getElementById('control-panel');
+    const imagePanel = document.getElementById('image-panel');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    
+    // Control inputs
+    const bgColorInput = document.getElementById('background-color-input');
+    const transparentBgCheckbox = document.getElementById('transparent-bg-checkbox');
+    const imageSizeInput = document.getElementById('image-size-input');
+    const imageFilterSelect = document.getElementById('image-filter-select');
+    const textInput = document.getElementById('text-input');
+    const fontSizeInput = document.getElementById('font-size-input');
+    const rotationInput = document.getElementById('rotation-input');
+    const colorPicker = document.getElementById('color-picker');
+    const fontStyleSelect = document.getElementById('font-style-select');
+    const outlineColorPicker = document.getElementById('outline-color-picker');
+    const outlineWidthInput = document.getElementById('outline-width-input');
+    const deleteTextBtn = document.getElementById('delete-text-btn');
+    const deleteImageBtn = document.getElementById('delete-image-btn');
+    const exportSizeSelect = document.getElementById('export-size-select');
+
+    // --- State Management ---
+    let imageObjects = [];
+    let textObjects = [];
+    let selectedObjectId = null;
+    let selectedObjectType = null; // 'text' or 'image'
+    let dragOffsetX, dragOffsetY;
+    let currentAction = null; // 'dragging', 'resizing', 'rotating'
+    let canvasBackgroundColor = '#e5e7eb';
+    let dragStartData = {};
+    
+    const HANDLE_SIZE = 10;
+
+    // --- Canvas & Core Functions ---
+    function initializeCanvas() {
+        const containerRect = canvasContainer.getBoundingClientRect();
+        canvas.width = containerRect.width - 32;
+        canvas.height = containerRect.height - 32;
+        canvas.style.backgroundColor = canvasBackgroundColor;
+        redrawCanvas();
+    }
+
+    function redrawCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (canvasBackgroundColor !== 'transparent') {
+            ctx.fillStyle = canvasBackgroundColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        const allObjects = [...imageObjects, ...textObjects];
+
+        allObjects.forEach(obj => {
+            ctx.save();
+            ctx.translate(obj.x, obj.y);
+            ctx.rotate(obj.rotation * Math.PI / 180);
+
+            if (obj.type === 'image') {
+                applyFilter(ctx, obj.filter);
+                ctx.drawImage(obj.img, -obj.width / 2, -obj.height / 2, obj.width, obj.height);
+            } else { // text
+                ctx.font = `${obj.fontSize}px "${obj.fontFamily}"`;
+                ctx.fillStyle = obj.color;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                const lines = obj.text.split('\n');
+                const lineHeight = obj.fontSize * 1.2;
+                obj.height = lines.length * lineHeight;
+                const totalHeight = obj.height;
+                
+                // Draw outline if width is greater than 0
+                if (obj.outlineWidth > 0) {
+                    ctx.strokeStyle = obj.outlineColor;
+                    ctx.lineWidth = obj.outlineWidth;
+                    lines.forEach((line, index) => {
+                        ctx.strokeText(line, 0, (index * lineHeight) - (totalHeight / 2) + (lineHeight / 2));
+                    });
+                }
+
+                // Draw filled text
+                lines.forEach((line, index) => {
+                    ctx.fillText(line, 0, (index * lineHeight) - (totalHeight / 2) + (lineHeight / 2));
+                });
+
+                const metrics = ctx.measureText(lines.reduce((a, b) => a.length > b.length ? a : b, ''));
+                obj.width = metrics.width;
+            }
+            
+            ctx.filter = 'none'; // Reset filter
+            if (obj.id === selectedObjectId) {
+                drawSelectionBox(obj);
+            }
+            ctx.restore();
+        });
+    }
+
+    function applyFilter(context, filterName) {
+        switch (filterName) {
+            case 'bw': context.filter = 'grayscale(100%)'; break;
+            case 'blur': context.filter = 'blur(5px)'; break;
+            case 'cartoon': context.filter = 'contrast(1.5) saturate(1.5)'; break;
+            default: context.filter = 'none';
+        }
+    }
+
+    function drawSelectionBox(obj) {
+        const halfW = obj.width / 2;
+        const halfH = obj.height / 2;
+        ctx.strokeStyle = '#007bff';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 3]);
+        ctx.strokeRect(-halfW, -halfH, obj.width, obj.height);
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#007bff';
+        ctx.fillRect(halfW - HANDLE_SIZE / 2, halfH - HANDLE_SIZE / 2, HANDLE_SIZE, HANDLE_SIZE);
+        ctx.beginPath();
+        ctx.arc(0, -halfH - HANDLE_SIZE, HANDLE_SIZE / 2, 0, 2 * Math.PI);
+        ctx.fill();
+    }
+
+    // --- State & UI Update Functions ---
+    function updateControls() {
+        const selectedObj = [...imageObjects, ...textObjects].find(o => o.id === selectedObjectId);
+        controlPanel.classList.add('disabled');
+        imagePanel.classList.add('disabled');
+        if (!selectedObj) return;
+
+        if (selectedObj.type === 'text') {
+            controlPanel.classList.remove('disabled');
+            textInput.value = selectedObj.text;
+            fontSizeInput.value = selectedObj.fontSize;
+            rotationInput.value = selectedObj.rotation;
+            colorPicker.value = selectedObj.color;
+            fontStyleSelect.value = selectedObj.fontFamily;
+            outlineColorPicker.value = selectedObj.outlineColor;
+            outlineWidthInput.value = selectedObj.outlineWidth;
+        } else if (selectedObj.type === 'image') {
+            imagePanel.classList.remove('disabled');
+            imageSizeInput.value = selectedObj.scale * 100;
+            imageFilterSelect.value = selectedObj.filter;
+        }
+    }
+    
+    function addText() {
+        const newText = {
+            id: Date.now(), type: 'text', text: 'New Text',
+            x: canvas.width / 2, y: canvas.height / 2,
+            fontSize: 50, fontFamily: 'Arial', color: '#000000',
+            rotation: 0, width: 0, height: 0,
+            outlineColor: '#ffffff', outlineWidth: 0,
+        };
+        textObjects.push(newText);
+        setSelectedObject(newText.id, 'text');
+        exportPngButton.disabled = false;
+    }
+
+    function addImage(file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+                const maxDim = 300;
+                const scale = Math.min(maxDim / img.width, maxDim / img.height, 1);
+                const newImage = {
+                    id: Date.now() + Math.random(), type: 'image', img: img,
+                    x: canvas.width / 2, y: canvas.height / 2,
+                    width: img.width * scale, height: img.height * scale,
+                    rotation: 0, scale: scale, filter: 'none',
+                };
+                imageObjects.push(newImage);
+                exportPngButton.disabled = false;
+                setSelectedObject(newImage.id, 'image');
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function deleteSelectedObject() {
+        if (!selectedObjectId) return;
+        if (selectedObjectType === 'text') {
+            textObjects = textObjects.filter(obj => obj.id !== selectedObjectId);
+        } else if (selectedObjectType === 'image') {
+            imageObjects = imageObjects.filter(obj => obj.id !== selectedObjectId);
+        }
+        setSelectedObject(null, null);
+        if (imageObjects.length === 0 && textObjects.length === 0) {
+            exportPngButton.disabled = true;
+        }
+    }
+
+    function setSelectedObject(id, type) {
+        selectedObjectId = id;
+        selectedObjectType = type;
+        updateControls();
+        redrawCanvas();
+    }
+    
+    // --- Event Handlers ---
+    window.addEventListener('resize', initializeCanvas);
+    document.addEventListener('DOMContentLoaded', initializeCanvas);
+
+    sidebarToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+        sidebarToggle.innerHTML = sidebar.classList.contains('collapsed') 
+            ? '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>'
+            : '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>';
+        setTimeout(initializeCanvas, 300);
+    });
+
+    imageLoader.addEventListener('change', (e) => {
+        for (const file of e.target.files) { addImage(file); }
+        e.target.value = '';
+    });
+    
+    addTextBtn.addEventListener('click', addText);
+    deleteTextBtn.addEventListener('click', deleteSelectedObject);
+    deleteImageBtn.addEventListener('click', deleteSelectedObject);
+
+    // --- Control Panel Listeners ---
+    bgColorInput.addEventListener('input', (e) => {
+        transparentBgCheckbox.checked = false;
+        canvasBackgroundColor = e.target.value;
+        canvas.style.backgroundColor = canvasBackgroundColor;
+        redrawCanvas();
+    });
+
+    transparentBgCheckbox.addEventListener('change', (e) => {
+        canvasBackgroundColor = e.target.checked ? 'transparent' : bgColorInput.value;
+        canvas.style.backgroundColor = canvasBackgroundColor;
+        redrawCanvas();
+    });
+
+    imageFilterSelect.addEventListener('input', (e) => {
+        if (!selectedObjectId || selectedObjectType !== 'image') return;
+        const selectedObj = imageObjects.find(obj => obj.id === selectedObjectId);
+        selectedObj.filter = e.target.value;
+        redrawCanvas();
+    });
+
+    [textInput, fontSizeInput, rotationInput, colorPicker, fontStyleSelect, outlineColorPicker, outlineWidthInput].forEach(input => {
+        input.addEventListener('input', () => {
+            if (!selectedObjectId || selectedObjectType !== 'text') return;
+            const selectedObj = textObjects.find(obj => obj.id === selectedObjectId);
+            if (input.id === 'text-input') selectedObj.text = input.value;
+            if (input.id === 'font-size-input') selectedObj.fontSize = parseInt(input.value, 10);
+            if (input.id === 'rotation-input') selectedObj.rotation = parseInt(input.value, 10);
+            if (input.id === 'color-picker') selectedObj.color = input.value;
+            if (input.id === 'font-style-select') selectedObj.fontFamily = input.value;
+            if (input.id === 'outline-color-picker') selectedObj.outlineColor = input.value;
+            if (input.id === 'outline-width-input') selectedObj.outlineWidth = parseInt(input.value, 10);
+            redrawCanvas();
+        });
+    });
+
+    imageSizeInput.addEventListener('input', (e) => {
+        if (!selectedObjectId || selectedObjectType !== 'image') return;
+        const selectedObj = imageObjects.find(obj => obj.id === selectedObjectId);
+        const newScale = parseInt(e.target.value) / 100;
+        const originalWidth = selectedObj.img.width;
+        const originalHeight = selectedObj.img.height;
+        selectedObj.width = originalWidth * newScale;
+        selectedObj.height = originalHeight * newScale;
+        selectedObj.scale = newScale;
+        redrawCanvas();
+    });
+
+    // --- Export Logic ---
+    exportPngButton.addEventListener('click', () => {
+        const button = exportPngButton;
+        const originalText = button.textContent;
+        button.textContent = 'Encoding...';
+        button.disabled = true;
+
+        // Calculate bounding box and scale factor
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        const allObjects = [...imageObjects, ...textObjects];
+        if (allObjects.length === 0) {
+            button.textContent = originalText;
+            button.disabled = false;
+            return;
+        }
+        allObjects.forEach(obj => {
+            minX = Math.min(minX, obj.x - obj.width / 2);
+            minY = Math.min(minY, obj.y - obj.height / 2);
+            maxX = Math.max(maxX, obj.x + obj.width / 2);
+            maxY = Math.max(maxY, obj.y + obj.height / 2);
+        });
+        const contentWidth = maxX - minX;
+        const contentHeight = maxY - minY;
+        if (contentWidth <= 0 || contentHeight <= 0) {
+            button.textContent = originalText;
+            button.disabled = false;
+            return;
+        }
+
+        const exportCanvas = document.createElement('canvas');
+        const exportSizeValue = exportSizeSelect.value;
+        let scaleFactor;
+
+        if (exportSizeValue === 'original') {
+            exportCanvas.width = contentWidth;
+            exportCanvas.height = contentHeight;
+            scaleFactor = 1;
+        } else {
+            const exportSize = parseInt(exportSizeValue, 10);
+            scaleFactor = exportSize / Math.max(contentWidth, contentHeight);
+            exportCanvas.width = contentWidth * scaleFactor;
+            exportCanvas.height = contentHeight * scaleFactor;
+        }
+
+        const exportCtx = exportCanvas.getContext('2d');
+
+        // Draw background
+        if (canvasBackgroundColor !== 'transparent') {
+            exportCtx.fillStyle = canvasBackgroundColor;
+            exportCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+        }
+
+        // Draw all objects
+        allObjects.forEach(obj => {
+            exportCtx.save();
+            const exportX = (obj.x - minX) * scaleFactor;
+            const exportY = (obj.y - minY) * scaleFactor;
+            exportCtx.translate(exportX, exportY);
+            exportCtx.rotate(obj.rotation * Math.PI / 180);
+            applyFilter(exportCtx, obj.filter);
+
+            if (obj.type === 'image') {
+                const exportWidth = obj.width * scaleFactor;
+                const exportHeight = obj.height * scaleFactor;
+                exportCtx.drawImage(obj.img, -exportWidth / 2, -exportHeight / 2, exportWidth, exportHeight);
+            } else { // Text
+                const exportFontSize = obj.fontSize * scaleFactor;
+                exportCtx.font = `${exportFontSize}px "${obj.fontFamily}"`;
+                exportCtx.fillStyle = obj.color;
+                exportCtx.textAlign = 'center';
+                exportCtx.textBaseline = 'middle';
+                const lines = obj.text.split('\n');
+                const lineHeight = exportFontSize * 1.2;
+                const totalHeight = lines.length * lineHeight;
+                
+                if (obj.outlineWidth > 0) {
+                    exportCtx.strokeStyle = obj.outlineColor;
+                    exportCtx.lineWidth = obj.outlineWidth * scaleFactor;
+                    lines.forEach((line, i) => {
+                        exportCtx.strokeText(line, 0, (i * lineHeight) - (totalHeight / 2) + (lineHeight / 2));
+                    });
+                }
+
+                lines.forEach((line, i) => {
+                    exportCtx.fillText(line, 0, (i * lineHeight) - (totalHeight / 2) + (lineHeight / 2));
+                });
+            }
+            exportCtx.restore();
+        });
+
+        const dataURL = exportCanvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.download = 'composition.png';
+        link.href = dataURL;
+        link.click();
+        button.textContent = originalText;
+        button.disabled = false;
+    });
+
+    // --- Animation Loop ---
+    function animate() {
+        // Redrawing is now primarily driven by user interaction, 
+        // but we keep the loop for potential future animations.
+        requestAnimationFrame(animate);
+    }
+    animate(); // Start the loop
+
+    // --- Canvas Mouse Interaction Logic ---
+    function getMousePos(e) {
+        const rect = canvas.getBoundingClientRect();
+        return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    }
+
+    canvas.addEventListener('mousedown', (e) => {
+        const mousePos = getMousePos(e);
+        currentAction = null;
+        let clickedOnObject = false;
+        const allObjects = [...imageObjects, ...textObjects];
+
+        const selectedObj = allObjects.find(o => o.id === selectedObjectId);
+        if (selectedObj) {
+            currentAction = getActionForMousePos(selectedObj, mousePos);
+            if (currentAction) {
+                clickedOnObject = true;
+                dragStartData.dist = Math.sqrt(Math.pow(mousePos.x - selectedObj.x, 2) + Math.pow(mousePos.y - selectedObj.y, 2));
+                dragStartData.width = selectedObj.width;
+                dragStartData.height = selectedObj.height;
+                dragStartData.fontSize = selectedObj.fontSize;
+            }
+        }
+        
+        if (!currentAction) {
+            for (let i = allObjects.length - 1; i >= 0; i--) {
+                const obj = allObjects[i];
+                if (isPointInObject(obj, mousePos)) {
+                    if (selectedObjectId !== obj.id) {
+                        setSelectedObject(obj.id, obj.type);
+                    }
+                    currentAction = 'dragging';
+                    dragOffsetX = mousePos.x - obj.x;
+                    dragOffsetY = mousePos.y - obj.y;
+                    clickedOnObject = true;
+                    if (obj.type === 'text') {
+                        textObjects.push(textObjects.splice(textObjects.findIndex(t => t.id === obj.id), 1)[0]);
+                    } else {
+                        imageObjects.push(imageObjects.splice(imageObjects.findIndex(img => img.id === obj.id), 1)[0]);
+                    }
+                    break;
+                }
+            }
+        }
+
+        if (!clickedOnObject) {
+            setSelectedObject(null, null);
+        }
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        if (!currentAction || !selectedObjectId) return;
+        const mousePos = getMousePos(e);
+        const allObjects = [...imageObjects, ...textObjects];
+        const selectedObj = allObjects.find(o => o.id === selectedObjectId);
+
+        if (currentAction === 'dragging') {
+            selectedObj.x = mousePos.x - dragOffsetX;
+            selectedObj.y = mousePos.y - dragOffsetY;
+        } else if (currentAction === 'rotating') {
+            const angle = Math.atan2(mousePos.y - selectedObj.y, mousePos.x - selectedObj.x) * 180 / Math.PI;
+            selectedObj.rotation = angle + 90;
+            if (selectedObj.type === 'text') {
+                rotationInput.value = selectedObj.rotation;
+            }
+        } else if (currentAction === 'resizing') {
+            const currentDist = Math.sqrt(Math.pow(mousePos.x - selectedObj.x, 2) + Math.pow(mousePos.y - selectedObj.y, 2));
+            if (dragStartData.dist === 0) return;
+            const scaleRatio = currentDist / dragStartData.dist;
+
+            if (selectedObj.type === 'text') {
+                selectedObj.fontSize = Math.max(10, dragStartData.fontSize * scaleRatio);
+                fontSizeInput.value = selectedObj.fontSize;
+            } else {
+                selectedObj.width = dragStartData.width * scaleRatio;
+                selectedObj.height = dragStartData.height * scaleRatio;
+                const originalWidth = selectedObj.img.width;
+                selectedObj.scale = selectedObj.width / originalWidth;
+                imageSizeInput.value = selectedObj.scale * 100;
+            }
+        }
+        redrawCanvas(); // Explicitly redraw on every mouse move during an action
+    });
+
+    canvas.addEventListener('mouseup', () => { currentAction = null; });
+    canvas.addEventListener('mouseleave', () => { currentAction = null; });
+    
+    // --- Helper functions for interaction ---
+    function isPointInObject(obj, pos) {
+        const dx = pos.x - obj.x;
+        const dy = pos.y - obj.y;
+        const angle = -obj.rotation * Math.PI / 180;
+        const rotatedX = dx * Math.cos(angle) - dy * Math.sin(angle);
+        const rotatedY = dx * Math.sin(angle) + dy * Math.cos(angle);
+        return Math.abs(rotatedX) < obj.width / 2 && Math.abs(rotatedY) < obj.height / 2;
+    }
+    
+    function getActionForMousePos(obj, pos) {
+        const dx = pos.x - obj.x;
+        const dy = pos.y - obj.y;
+        const angle = -obj.rotation * Math.PI / 180;
+        const rotatedX = dx * Math.cos(angle) - dy * Math.sin(angle);
+        const rotatedY = dx * Math.sin(angle) + dy * Math.cos(angle);
+        const halfW = obj.width / 2;
+        const halfH = obj.height / 2;
+
+        if (rotatedX > halfW - HANDLE_SIZE && rotatedX < halfW + HANDLE_SIZE &&
+            rotatedY > halfH - HANDLE_SIZE && rotatedY < halfH + HANDLE_SIZE) {
+            return 'resizing';
+        }
+
+        const rotHandleX = 0;
+        const rotHandleY = -halfH - HANDLE_SIZE;
+        const distToRotHandle = Math.sqrt(Math.pow(rotatedX - rotHandleX, 2) + Math.pow(rotatedY - rotHandleY, 2));
+        if (distToRotHandle < HANDLE_SIZE) {
+            return 'rotating';
+        }
+        return null;
+    }
+    </script>
+</body>
+</html>
