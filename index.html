@@ -197,31 +197,54 @@
 </a>
 <div class="drop-content" style="display:none" id="postsDiv">
     <article style="margin-left:10%;max-width:50%">
-    <section></section>
+    <section id="posts-container">
+        <!-- Posts will be loaded here dynamically -->
+        <p>Loading posts...</p>
+    </section>
     <section>
-      
-        <div>
-          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
-  <div class="bg-white mb3 pa4 gray overflow-hidden">
-    <span class="f6 db">Posts</span>
-    <h1 class="f3 near-black">
-      <a href="../posts/empty-post/" class="link black dim">
-        An empty post...
-      </a>
-    </h1>
-    <div class="nested-links f5 lh-copy nested-copy-line-height">
-      nothing to see...
-    </div>
-  </div>
-</div>
-
-        </div>
-      
       <h2 style="text-decoration:underline;"><a href="./posts/" title="Posts">All Posts</a></h2>
-
-    </section></article>
-
+    </section>
+    </article>
 </div>
+
+<script>
+  async function loadPosts() {
+    const container = document.getElementById('posts-container');
+    try {
+      const response = await fetch('posts/posts.json');
+      const posts = await response.json();
+      
+      if (posts.length === 0) {
+        container.innerHTML = '<p>No posts yet.</p>';
+        return;
+      }
+
+      // Only show the last 3 posts on the homepage
+      const recentPosts = posts.slice(0, 3);
+
+      container.innerHTML = recentPosts.map(post => `
+        <div class="relative w-100 mb4 bg-white nested-copy-line-height">
+          <div class="bg-white mb3 pa4 gray overflow-hidden">
+            <span class="f6 db">Posts</span>
+            <h1 class="f3 near-black">
+              <a href="${post.path}" class="link black dim">
+                ${post.title}
+              </a>
+            </h1>
+            <div class="nested-links f5 lh-copy nested-copy-line-height">
+              ${post.summary}
+              <div class="f6 gray mt2">${post.date}</div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    } catch (error) {
+      console.error('Error loading posts:', error);
+      container.innerHTML = '<p>Error loading posts.</p>';
+    }
+  }
+  loadPosts();
+</script>
 
 <a style="cursor: pointer;" onclick="toggle('aboutDiv');underline('aboutBar');"href="#about">
 

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>{{ title }} | M-Watson</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <link rel="stylesheet" href="../../static/style/style.css">
+    <link rel="stylesheet" href="../../static/style/navbar.css">
+    <link rel="stylesheet" href="../../static/style/card.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oxygen">
+    <style>
+      body {
+        font-family: 'Oxygen', 'avenir', sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+        background-color: #f4f4f4;
+      }
+      .post-container {
+        background: white;
+        padding: 3rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      }
+      .post-header {
+        border-bottom: 2px solid #eee;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+      }
+      .post-date {
+        color: #888;
+        font-size: 0.9rem;
+      }
+      .home-link {
+        display: inline-block;
+        margin-bottom: 2rem;
+        text-decoration: none;
+        color: #5b21b6;
+        font-weight: bold;
+      }
+      .home-link:hover {
+        text-decoration: underline;
+      }
+      .post-content img {
+        max-width: 100%;
+        height: auto;
+      }
+    </style>
+  </head>
+
+  <body class="bg-near-white">
+    <div class="pa4">
+      <a href="../../index.html" class="home-link">← Back to Home</a>
+      
+      <main class="post-container">
+        <header class="post-header">
+          <h1 class="f2 near-black mb0">{{ title }}</h1>
+          <p class="post-date">Published on: {{ date }}</p>
+        </header>
+
+        <article class="post-content">
+  {{ content }}
+        </article>
+      </main>
+
+      <footer class="mt5 gray">
+        &copy; M-Watson 2026
+      </footer>
+    </div>
+  </body>
+</html>
