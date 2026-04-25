@@ -13,27 +13,19 @@
       body {
         font-family: 'Oxygen', 'avenir', sans-serif;
         line-height: 1.6;
-        color: #333;
         max-width: 800px;
         margin: 0 auto;
         padding: 2rem;
-        background-color: white; /* All white background */
-        transition: background-color 0.3s, color 0.3s;
       }
       .post-container {
-        background: white;
         padding: 3rem;
         border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        border: 1px solid #eee;
+        transition: background-color 0.3s;
       }
       .post-header {
         border-bottom: 2px solid #eee;
         margin-bottom: 2rem;
         padding-bottom: 1rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
       }
       .post-date {
         color: #888;
@@ -42,46 +34,42 @@
       .home-link {
         display: inline-block;
         margin-bottom: 2rem;
-        text-decoration: none;
-        color: #5b21b6;
         font-weight: bold;
-      }
-      .home-link:hover {
-        text-decoration: underline;
       }
       .post-content img {
         max-width: 100%;
         height: auto;
       }
-
-      /* Dark Mode overrides for template */
-      body.dark-mode {
-        background-color: #121212;
-        color: #e0e0e0;
-      }
-      body.dark-mode .post-container {
-        background-color: #1e1e1e;
+      body.dark-mode .post-header {
         border-color: #333;
       }
-      body.dark-mode .home-link {
-        color: #bb86fc;
-      }
     </style>
+    <script>
+      if (localStorage.getItem("dark-mode") === "true") {
+        document.documentElement.classList.add("dark-mode");
+      }
+    </script>
   </head>
 
   <body class="ma0">
+    <script>
+      if (localStorage.getItem("dark-mode") === "true") {
+        document.body.classList.add("dark-mode");
+      }
+    </script>
+
+    <button class="night-mode-toggle" onclick="toggleDarkMode()" title="Toggle Night Mode">
+      <svg id="sun-icon" style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      <svg id="moon-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </button>
+
     <div class="pa4">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <a href="../../index.html" class="home-link">← Back to Home</a>
-        <button onclick="toggleDarkMode()" style="cursor:pointer; padding: 5px 10px; border-radius: 5px; border: 1px solid #ccc; background: transparent; color: inherit; margin-bottom: 2rem;">Toggle Night Mode</button>
-      </div>
+      <a href="../../index.html" class="home-link">← Back to Home</a>
       
       <main class="post-container">
         <header class="post-header">
-          <div>
-            <h1 class="f2 near-black mb0">{{ title }}</h1>
-            <p class="post-date">Published on: {{ date }}</p>
-          </div>
+          <h1 class="f2 near-black mb0">{{ title }}</h1>
+          <p class="post-date">Published on: {{ date }}</p>
         </header>
 
         <article class="post-content">
@@ -99,10 +87,16 @@
         document.body.classList.toggle("dark-mode");
         const isDark = document.body.classList.contains("dark-mode");
         localStorage.setItem("dark-mode", isDark);
+        updateIcons(isDark);
+      }
+
+      function updateIcons(isDark) {
+        document.getElementById('sun-icon').style.display = isDark ? 'block' : 'none';
+        document.getElementById('moon-icon').style.display = isDark ? 'none' : 'block';
       }
 
       if (localStorage.getItem("dark-mode") === "true") {
-        document.body.classList.add("dark-mode");
+        updateIcons(true);
       }
     </script>
   </body>

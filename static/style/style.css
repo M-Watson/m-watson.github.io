@@ -4,14 +4,14 @@ a, a:visited, a:hover, a:active {
 }
 
 /* Specific overrides for cards to keep them clean if desired */
-.card a, .homecard a {
+.card a, .homecard a, .post-card a {
   text-decoration: none;
 }
 
 body {
   background-color: white;
   color: black;
-  font-family: 'Oxygen', sans-serif;
+  font-family: 'Oxygen', 'avenir', sans-serif;
   transition: background-color 0.3s, color 0.3s;
   margin: 0;
 }
@@ -26,8 +26,15 @@ body.dark-mode a, body.dark-mode a:visited {
   color: #e0e0e0;
 }
 
+/* Seamless cards in dark mode */
+body.dark-mode .card,
+body.dark-mode .homecard,
+body.dark-mode .post-card,
+body.dark-mode .post-container,
 body.dark-mode .container {
-  background-color: #121212;
+  background-color: #121212 !important;
+  color: #e0e0e0;
+  border-color: #333;
 }
 
 body.dark-mode .homecard {
@@ -36,6 +43,7 @@ body.dark-mode .homecard {
 
 body.dark-mode footer {
   background-color: #000 !important;
+  color: #888;
 }
 
 /* Night Mode Inversions */
@@ -58,4 +66,17 @@ body.dark-mode img {
     border: none;
     color: inherit;
     padding: 10px;
+}
+
+.post-image-placeholder {
+  width: 20%;
+  height: 100px;
+  background-color: #eee;
+  float: right;
+  margin-left: 5%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 0.8rem;
 }
