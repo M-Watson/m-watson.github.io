@@ -13,17 +13,13 @@
       body {
         font-family: 'Oxygen', 'avenir', sans-serif;
         line-height: 1.6;
-        color: #333;
         max-width: 800px;
         margin: 0 auto;
         padding: 2rem;
-        background-color: #f4f4f4;
       }
       .post-container {
-        background: white;
-        padding: 3rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        padding: 0; /* Seamless background */
+        transition: background-color 0.3s;
       }
       .post-header {
         border-bottom: 2px solid #eee;
@@ -34,26 +30,55 @@
         color: #888;
         font-size: 0.9rem;
       }
-      .home-link {
-        display: inline-block;
+      .nav-links {
+        display: flex;
+        justify-content: space-between;
         margin-bottom: 2rem;
-        text-decoration: none;
-        color: #5b21b6;
         font-weight: bold;
-      }
-      .home-link:hover {
-        text-decoration: underline;
       }
       .post-content img {
         max-width: 100%;
         height: auto;
       }
+      body.dark-mode .post-header {
+        border-color: #333;
+      }
+      .post-nav-footer {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid #eee;
+        font-weight: bold;
+      }
+      body.dark-mode .post-nav-footer {
+        border-color: #333;
+      }
     </style>
+    <script>
+      if (localStorage.getItem("dark-mode") === "true") {
+        document.documentElement.classList.add("dark-mode");
+      }
+    </script>
   </head>
 
-  <body class="bg-near-white">
+  <body class="ma0">
+    <script>
+      if (localStorage.getItem("dark-mode") === "true") {
+        document.body.classList.add("dark-mode");
+      }
+    </script>
+
+    <button class="night-mode-toggle" onclick="toggleDarkMode()" title="Toggle Night Mode">
+      <svg id="sun-icon" style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      <svg id="moon-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </button>
+
     <div class="pa4">
-      <a href="../../index.html" class="home-link">← Back to Home</a>
+      <nav class="nav-links">
+        <a href="../../index.html">← Home</a>
+        <a href="../">All Posts</a>
+      </nav>
       
       <main class="post-container">
         <header class="post-header">
@@ -65,11 +90,60 @@
   <h1>Always resetting</h1>
 <p>I have reset the posts pages again... Let's see if I can stick with it this time.</p>
         </article>
+
+        <footer class="post-nav-footer">
+          <div id="prev-post"></div>
+          <div id="next-post"></div>
+        </footer>
       </main>
 
-      <footer class="mt5 gray">
+      <footer class="mt5 gray" style="text-align: center;">
         &copy; M-Watson 2026
       </footer>
     </div>
+
+    <script>
+      function toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
+        const isDark = document.body.classList.contains("dark-mode");
+        localStorage.setItem("dark-mode", isDark);
+        updateIcons(isDark);
+      }
+
+      function updateIcons(isDark) {
+        document.getElementById('sun-icon').style.display = isDark ? 'block' : 'none';
+        document.getElementById('moon-icon').style.display = isDark ? 'none' : 'block';
+      }
+
+      if (localStorage.getItem("dark-mode") === "true") {
+        updateIcons(true);
+      }
+
+      // Dynamic Navigation Logic
+      async function setupNavigation() {
+        try {
+          const response = await fetch('../posts.json');
+          const posts = await response.json();
+          const currentPath = window.location.pathname;
+          
+          // Find current post index
+          const currentIndex = posts.findIndex(p => currentPath.includes(p.path.replace('posts/', '')));
+          
+          if (currentIndex !== -1) {
+            if (currentIndex < posts.length - 1) {
+              const prev = posts[currentIndex + 1];
+              document.getElementById('prev-post').innerHTML = `<a href="../${prev.path.replace('posts/', '')}">← ${prev.title}</a>`;
+            }
+            if (currentIndex > 0) {
+              const next = posts[currentIndex - 1];
+              document.getElementById('next-post').innerHTML = `<a href="../${next.path.replace('posts/', '')}">${next.title} →</a>`;
+            }
+          }
+        } catch (e) {
+          console.error("Navigation setup failed", e);
+        }
+      }
+      setupNavigation();
+    </script>
   </body>
 </html>
