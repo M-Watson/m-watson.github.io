@@ -9,17 +9,28 @@
     <link rel="stylesheet" href="static/style/navbar.css">
     <link rel="stylesheet" href="static/style/card.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oxygen">
+    <style>
+      /* Rotating bar styles */
+      .homecard {
+        border-left: medium solid black;
+        border-bottom: medium none transparent;
+        transition: border 0.3s ease;
+      }
+      .homecard.active {
+        border-left: medium none transparent;
+        border-bottom: medium solid black;
+      }
+      body.dark-mode .homecard {
+        border-color: #e0e0e0;
+      }
+    </style>
 </head>
 
 <body class="ma0 avenir">
-  <header>
-    <div class="tc-l pv3 ph3 ph4-ns">
-      <h1 class="f2 f-subheadline-l fw2 light-silver mb0 lh-title">
-        M-Watson
-      </h1>
-      <button onclick="toggleDarkMode()" style="cursor:pointer; padding: 5px 10px; border-radius: 5px; border: 1px solid #ccc; background: transparent; color: inherit;">Toggle Night Mode</button>
-    </div>
-  </header>
+  <button class="night-mode-toggle" onclick="toggleDarkMode()" title="Toggle Night Mode">
+    <svg id="sun-icon" style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+    <svg id="moon-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+  </button>
 
   <main class="pb7" role="main">
     <div class="hero">
@@ -27,8 +38,8 @@
     </div>
 
     <!-- Research Section -->
-    <a style="cursor: pointer;" onclick="toggle('researchDiv');underline('researchBar');" href="#research">
-      <div class="homecard" id="researchBar" style="border-left:medium solid; border-bottom: medium none;">
+    <a style="cursor: pointer;" onclick="toggle('researchDiv', 'researchBar');" href="#research">
+      <div class="homecard" id="researchBar">
         <div class="container">
           <h4><b>research</b></h4>
         </div>
@@ -53,16 +64,78 @@
           <img class="card-left" src="./static/img/RANDBODYCAM_image.png" alt="Avatar" style="float:right; position: relative; width: 20%;">
           <div class="container">
             <h4><b>Wearable Technologies for Law Enforcement: Multifunctional Vest System Options</b></h4>
-            <p>This report is part of an ongoing research program...</p>
+            <p>This report is part of an ongoing research program, led by the RAND Corporation and sponsored by the National Institute of Justice...</p>
           </div>
         </div>
       </a>
-      <!-- ... other research cards ... -->
+
+      <a href="https://www.dcpolicycenter.org/publications/diving-into-dcs-data-policy/">
+        <div class="card">
+         <img class="card-right" src="https://www.dcpolicycenter.org/wp-content/uploads/2017/08/willard-and-marriott.jpg" alt="Avatar">
+         <div class="container">
+           <h4><b>Diving into D.C.'s data policy</b></h4>
+           <p>A deep dive into the new data policy released by the D.C. Government</p></div>
+        </div>
+      </a>
+
+      <a href="https://www.nature.com/articles/srep39506">
+        <div class="card">
+         <img class="card-left" src="https://media.nature.com/m685/nature-static/srep/2016/161222/srep39506/images/srep39506-f3.jpg" alt="Avatar" style="float:right; position: relative; width: 20%;">
+         <div class="container">
+           <h4><b>Direct measurements of multi-photon induced nonlinear lattice dynamics in semiconductors via time-resolved x-ray scattering</b></h4>
+           <p>Nonlinear optical phenomena in semiconductors present several fundamental problems in modern optics that are of great importance for the development of optoelectronic devices...</p></div>
+        </div>
+      </a>
+
+      <a href="http://www.dtic.mil/get-tr-doc/pdf?AD=AD1021549">
+        <div class="card">
+         <img class="card-right" src="../static/img/RANDDIA_image.png" alt="Avatar">
+         <div class="container">
+           <h4><b>Defining the Roles, Responsibilities, and Functions for Data Scienc e Within the Defense Intelligence Agency</b></h4>
+           <p>Exploiting the rapidly growing sources of data available for collection and analysis is one of the greatest professional challenges facing today’s intelligence leaders...</p></div>
+        </div>
+      </a>
+
+      <a href="https://www.rand.org/content/dam/rand/pubs/tools/TL100/TL186/RAND_TL186.pdf">
+        <div class="card">
+         <img class="card-left" src="../static/img/cybsec_image.png" alt="Avatar">
+         <div class="container">
+           <h4><b>A Framework for Programming and Budgeting for Cybersecurity</b></h4>
+           <p>When defending an organization against cyberattacks, cybersecurity professionals are faced with the dilemma of selecting from a large set of cybersecurity defensive measures...</p></div>
+        </div>
+      </a>
+
+      <a href="https://pubs.acs.org/doi/abs/10.1021/nn405826k">
+        <div class="card">
+         <img class="card-right" src="https://pubs.acs.org/na101/home/literatum/publisher/achs/journals/content/ancac3/2014/ancac3.2014.8.issue-1/nn405826k/production/images/medium/nn-2013-05826k_0005.gif" alt="Avatar" style="float:right; position: relative; width: 20%;">
+         <div class="container">
+           <h4><b>Thermal conductivity of monolayer molybdenum disulfide obtained from temperature-dependent Raman spectroscopy</b></h4>
+           <p>Atomically thin molybdenum disulfide (MoS2) offers potential for advanced devices and an alternative to graphene due to its unique electronic and optical properties...</p></div>
+        </div>
+      </a>
+
+      <a href="https://mdsoar.org/handle/11603/1878">
+        <div class="card">
+         <img class="card-left" src="../static/img/PHOTOLUM_image.png" alt="Avatar">
+         <div class="container">
+           <h4><b>Temperature and power dependent photothermal properties of single-layer MoS2</b></h4>
+           <p>The discovery of graphene, nearly a decade ago, has since given interest into other atomically thin, two-dimensional crystals...</p></div>
+        </div>
+      </a>
+
+      <a href="https://www.sciencedirect.com/science/article/pii/S016890021100012X">
+        <div class="card">
+         <img class="card-right" src="https://ars.els-cdn.com/content/image/1-s2.0-S016890021100012X-gr3.jpg" alt="Avatar" style="float:right; position: relative; width: 20%;">
+         <div class="container">
+           <h4><b>EPICS oscilloscope for time-resolved data acquisition</b></h4>
+           <p>The Sector 7 undulator beamline (7 ID) of the Advanced Photon Source (APS) is dedicated to time-resolved X-ray research...</p></div>
+        </div>
+      </a>
     </div>
 
     <!-- Posts Section -->
-    <a style="cursor: pointer;" onclick="toggle('postsDiv');underline('postsBar');" href="#posts">
-      <div class="homecard" id="postsBar" style="border-left:medium solid; border-bottom: medium none;">
+    <a style="cursor: pointer;" onclick="toggle('postsDiv', 'postsBar');" href="#posts">
+      <div class="homecard" id="postsBar">
         <div class="container">
           <h4><b>posts</b></h4>
         </div>
@@ -79,8 +152,8 @@
     </div>
 
     <!-- About Section -->
-    <a style="cursor: pointer;" onclick="toggle('aboutDiv');underline('aboutBar');" href="#about">
-      <div class="homecard" id="aboutBar" style="border-left:medium solid; border-bottom: medium none;">
+    <a style="cursor: pointer;" onclick="toggle('aboutDiv', 'aboutBar');" href="#about">
+      <div class="homecard" id="aboutBar">
         <div class="container">
           <h4><b>about</b></h4>
         </div>
@@ -93,6 +166,7 @@
             <div class="container">
               <h4><b>Michael Watson</b></h4>
               <p>Michael Watson joined the D.C. Policy Center in January 2017...</p>
+              <p>Michael holds a Master's of Science from Towson University in Applied Physics. He conducted research on novel two-dimensional materials. He has a Bachelor's of Science from DePaul University in Physics where he conducted research on ultra-fast laser-matter interactions...</p>
             </div>
           </div>
         </a>
@@ -118,19 +192,16 @@
   </footer>
 
   <script>
-    function toggle(obj) {
-      var x = document.getElementById(obj);
-      x.style.display = (x.style.display === "none") ? "block" : "none";
-    }
-
-    function underline(obj) {
-      var x = document.getElementById(obj);
-      if (x.style.borderLeft === "medium solid") {
-        x.style.borderLeft = "medium none";
-        x.style.borderBottom = "medium solid";
+    function toggle(divId, barId) {
+      var x = document.getElementById(divId);
+      var bar = document.getElementById(barId);
+      
+      if (x.style.display === "none") {
+        x.style.display = "block";
+        bar.classList.add('active');
       } else {
-        x.style.borderLeft = "medium solid";
-        x.style.borderBottom = "medium none";
+        x.style.display = "none";
+        bar.classList.remove('active');
       }
     }
 
@@ -138,11 +209,18 @@
       document.body.classList.toggle("dark-mode");
       const isDark = document.body.classList.contains("dark-mode");
       localStorage.setItem("dark-mode", isDark);
+      updateIcons(isDark);
+    }
+
+    function updateIcons(isDark) {
+      document.getElementById('sun-icon').style.display = isDark ? 'block' : 'none';
+      document.getElementById('moon-icon').style.display = isDark ? 'none' : 'block';
     }
 
     // Check for saved dark mode preference
     if (localStorage.getItem("dark-mode") === "true") {
       document.body.classList.add("dark-mode");
+      updateIcons(true);
     }
 
     async function loadPosts() {
