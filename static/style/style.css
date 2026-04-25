@@ -1,3 +1,13 @@
+a, a:visited, a:hover, a:active {
+  color: inherit;
+  text-decoration: underline;
+}
+
+/* Specific overrides for cards to keep them clean if desired */
+.card a, .homecard a {
+  text-decoration: none;
+}
+
 body {
   background-color: white;
   color: black;
@@ -12,16 +22,7 @@ body.dark-mode {
   color: #e0e0e0;
 }
 
-body.dark-mode .card,
-body.dark-mode .homecard,
-body.dark-mode .post-card,
-body.dark-mode .post-container {
-  background-color: #121212; /* Seamless background */
-  color: #e0e0e0;
-  border-color: #333;
-}
-
-body.dark-mode a {
+body.dark-mode a, body.dark-mode a:visited {
   color: #e0e0e0;
 }
 
