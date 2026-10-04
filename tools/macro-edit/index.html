@@ -11,33 +11,7 @@
         // Shim for gifuct-js v1.0.0 compatibility with v2.0.0 API
         window.parseGIF = window.parseGIF || ((buf) => new GIF(buf));
         window.decompressFrames = window.decompressFrames || ((gif, buildPatch) => gif.decompressFrames(buildPatch));
-        
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        // Map gray and white to a dark slate palette for an instant dark mode
-                        white: '#1e293b', // slate-800
-                        gray: {
-                            50: '#0f172a', // slate-900
-                            100: '#020617', // slate-950 (app background)
-                            200: '#334155', // slate-700 (borders)
-                            400: '#94a3b8', // slate-400 (secondary text)
-                            500: '#cbd5e1', // slate-300
-                            800: '#f8fafc', // text light
-                            900: '#ffffff', // text very light (headers)
-                        },
-                        blue: {
-                            50: '#1e1b4b',
-                            200: '#3730a3',
-                            500: '#818cf8',
-                            600: '#6366f1',
-                            700: '#4f46e5',
-                        }
-                    }
-                }
-            }
-        }
+
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -74,8 +48,8 @@
         }
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
         /* Modern Range Sliders */
         input[type=range] {
@@ -102,14 +76,11 @@
             width: 100%;
             height: 4px;
             cursor: pointer;
-            background: #334155;
+            background: #cbd5e1;
             border-radius: 2px;
         }
         
-        /* Select and Color Input tweaks for dark mode */
-        select, input[type="color"] {
-            color-scheme: dark;
-        }
+
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 antialiased selection:bg-blue-600 selection:text-white">
@@ -123,9 +94,7 @@
                     <h1 class="text-xl font-bold text-gray-900">Macro Edit</h1>
                     <p class="text-xs text-gray-500">Advanced Image & Text Overlay</p>
                 </div>
-                <button id="theme-toggle" class="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors text-gray-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                </button>
+
             </div>
 
             <!-- Add Tools Section -->
@@ -223,8 +192,8 @@
                     <!-- Image Properties -->
                     <div id="image-controls" class="hidden space-y-4">
                         <div class="grid grid-cols-2 gap-2">
-                            <button id="img-fit-btn" class="bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 font-bold py-1.5 rounded-md hover:bg-indigo-600/40 transition-colors text-xs">Fit Canvas</button>
-                            <button id="img-fill-btn" class="bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 font-bold py-1.5 rounded-md hover:bg-indigo-600/40 transition-colors text-xs">Stretch Fill</button>
+                            <button id="img-fit-btn" class="bg-indigo-600/20 text-blue-600 border border-indigo-500/30 font-bold py-1.5 rounded-md hover:bg-indigo-600/40 transition-colors text-xs">Fit Canvas</button>
+                            <button id="img-fill-btn" class="bg-indigo-600/20 text-blue-600 border border-indigo-500/30 font-bold py-1.5 rounded-md hover:bg-indigo-600/40 transition-colors text-xs">Stretch Fill</button>
                         </div>
                         <div>
                             <label class="text-xs font-semibold text-gray-500 mb-1 block">Scale</label>
@@ -274,15 +243,15 @@
                                 <label class="text-xs font-semibold text-gray-500 mb-1 block">Color</label>
                                 <input type="color" id="shape-color-picker" class="w-full h-8 p-1 border border-gray-200 rounded-md">
                             </div>
-                            <div>
-                                <label class="text-xs font-semibold text-gray-500 mb-1 block">Opacity</label>
-                                <input type="range" id="shape-opacity-input" min="0" max="100" class="w-full">
-                            </div>
                         </div>
                     </div>
 
                     <!-- Shared Effects/Animation -->
                     <div class="pt-4 border-t border-gray-100 space-y-4">
+                        <div>
+                            <label class="text-[10px] font-semibold text-gray-500 mb-1 block">Layer Opacity</label>
+                            <input type="range" id="layer-opacity-input" min="0" max="100" class="w-full">
+                        </div>
                          <details class="group">
                             <summary class="flex items-center justify-between text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer list-none">
                                 <span>Effects & Filters</span>
@@ -329,6 +298,26 @@
                                 </div>
                                 <div>
                                     <input type="range" id="animation-speed-input" min="1" max="100" class="w-full">
+                                </div>
+                            </div>
+                        </details>
+
+                        <details class="group">
+                            <summary class="flex items-center justify-between text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer list-none">
+                                <span>Alignment & Matching</span>
+                                <svg class="w-4 h-4 group-open:rotate-180 transition-transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                            </summary>
+                            <div class="pt-3 space-y-3">
+                                <div>
+                                    <label class="text-[10px] font-semibold text-gray-500 mb-1 block">Target Layer</label>
+                                    <select id="match-target-select" class="w-full p-1 text-sm border border-gray-200 rounded-md">
+                                        <!-- Options populated dynamically -->
+                                    </select>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button id="match-size-btn" class="bg-gray-100 text-gray-700 border border-gray-300 font-semibold py-1.5 rounded-md hover:bg-gray-200 transition-colors text-[10px]">Match Size</button>
+                                    <button id="match-pos-btn" class="bg-gray-100 text-gray-700 border border-gray-300 font-semibold py-1.5 rounded-md hover:bg-gray-200 transition-colors text-[10px]">Match Pos</button>
+                                    <button id="match-both-btn" class="col-span-2 bg-indigo-50 text-indigo-700 border border-indigo-200 font-semibold py-1.5 rounded-md hover:bg-indigo-100 transition-colors text-[10px]">Match Size & Position</button>
                                 </div>
                             </div>
                         </details>
@@ -385,7 +374,7 @@
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
                                     <label class="text-[10px] font-semibold text-gray-500 mb-1 block">Time/Frame (s)</label>
-                                    <input type="text" inputmode="decimal" id="export-gif-duration" value="0.5" placeholder="0.5" class="w-full p-1 text-sm bg-slate-800 text-slate-200 border border-slate-700 rounded-md focus:outline-none focus:border-indigo-500">
+                                    <input type="text" inputmode="decimal" id="export-gif-duration" value="0.5" placeholder="0.5" class="w-full p-1 text-sm bg-white text-gray-800 border border-gray-200 rounded-md focus:outline-none focus:border-indigo-500">
                                 </div>
                                 <div class="flex items-end">
                                     <button id="export-gif-button" class="w-full bg-orange-500 text-white font-bold py-1.5 rounded-md hover:bg-orange-600 transition-colors text-sm disabled:opacity-50 h-[30px]">
@@ -412,12 +401,12 @@
              <button id="sidebar-toggle" class="absolute top-4 left-4 bg-white/80 backdrop-blur-xl border border-gray-200 p-2 rounded-full shadow-lg z-10 hover:bg-gray-50 hover:scale-105 transition-all text-gray-600">
                 <svg id="toggle-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
-            <canvas id="image-canvas" class="shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-slate-700/30"></canvas>
+            <canvas id="image-canvas" class="shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-gray-400/30"></canvas>
             
             <!-- Timeline Panel -->
-            <div id="timeline-panel" class="absolute bottom-4 left-4 right-4 bg-slate-900/80 backdrop-blur-xl border border-slate-700/50 rounded-lg p-3 flex space-x-3 overflow-x-auto custom-scrollbar z-10 shadow-lg items-center">
+            <div id="timeline-panel" class="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-xl border border-gray-200 rounded-lg p-3 flex space-x-3 overflow-x-auto custom-scrollbar z-10 shadow-lg items-center">
                 <div id="timeline-thumbnails" class="flex space-x-2 items-center"></div>
-                <button id="add-frame-btn" class="flex-shrink-0 w-16 h-16 bg-slate-800/50 rounded-md border-2 border-dashed border-slate-600 hover:border-indigo-500 flex items-center justify-center text-slate-400 hover:text-indigo-400 transition-colors" title="Add Frame">
+                <button id="add-frame-btn" class="flex-shrink-0 w-16 h-16 bg-gray-100/50 rounded-md border-2 border-dashed border-gray-300 hover:border-blue-500 flex items-center justify-center text-gray-400 hover:text-blue-600 transition-colors" title="Add Frame">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 </button>
             </div>
@@ -470,7 +459,7 @@
     const shapeWidthInput = document.getElementById('shape-width-input');
     const shapeHeightInput = document.getElementById('shape-height-input');
     const shapeColorPicker = document.getElementById('shape-color-picker');
-    const shapeOpacityInput = document.getElementById('shape-opacity-input');
+    const layerOpacityInput = document.getElementById('layer-opacity-input');
 
     const filterSelect = document.getElementById('filter-select');
     const filterStrengthInput = document.getElementById('filter-strength-input');
@@ -485,6 +474,11 @@
     const applyTemplateBtn = document.getElementById('apply-template-btn');
     const timelineThumbnails = document.getElementById('timeline-thumbnails');
     const addFrameBtn = document.getElementById('add-frame-btn');
+
+    const matchTargetSelect = document.getElementById('match-target-select');
+    const matchSizeBtn = document.getElementById('match-size-btn');
+    const matchPosBtn = document.getElementById('match-pos-btn');
+    const matchBothBtn = document.getElementById('match-both-btn');
 
     // --- State Management ---
     let framesList = [ { id: Date.now(), objects: [], bgColor: '#0f172a' } ];
@@ -511,8 +505,8 @@
             wrapper.className = 'relative group';
             
             const btn = document.createElement('button');
-            btn.className = `flex-shrink-0 w-16 h-16 rounded-md border-2 overflow-hidden flex flex-col items-center justify-center transition-colors ${idx === currentFrameIndex ? 'border-indigo-500 bg-slate-800' : 'border-slate-700 bg-slate-900 hover:border-slate-500'}`;
-            btn.innerHTML = `<span class="text-[10px] font-bold ${idx === currentFrameIndex ? 'text-indigo-400' : 'text-slate-400'}">F${idx + 1}</span>`;
+            btn.className = `flex-shrink-0 w-16 h-16 rounded-md border-2 overflow-hidden flex flex-col items-center justify-center transition-colors ${idx === currentFrameIndex ? 'border-blue-500 bg-gray-100' : 'border-gray-300 bg-white hover:border-gray-400'}`;
+            btn.innerHTML = `<span class="text-[10px] font-bold ${idx === currentFrameIndex ? 'text-blue-600' : 'text-gray-400'}">F${idx + 1}</span>`;
             
             btn.onclick = () => {
                 framesList[currentFrameIndex].objects = objects;
@@ -607,6 +601,9 @@
             else if (obj.animationType === 'shake') { animX = (Math.random() - 0.5) * 5; animY = (Math.random() - 0.5) * 5; }
             else if (obj.animationType === 'rainbow') animHue = (time * speed * 10) % 360;
             else if (obj.animationType === 'spin') animRotation = t * 50;
+            else if (obj.animationType === 'blink') animOpacity = Math.floor(t * 5) % 2 === 0 ? 1 : 0;
+            else if (obj.animationType === 'marquee') animX = canvas.width - ((t * 150) % (canvas.width * 2));
+            else if (obj.animationType === 'slide') animX = Math.sin(t) * 100;
 
             let typewriterCharCount = Infinity;
             let displayText = obj.text || '';
@@ -631,7 +628,7 @@
             ctx.translate(obj.x + animX, obj.y + animY);
             ctx.rotate((obj.rotation + animRotation) * Math.PI / 180);
             ctx.scale(animScale, animScale);
-            ctx.globalAlpha = animOpacity;
+            ctx.globalAlpha = (obj.opacity !== undefined ? obj.opacity / 100 : 1) * animOpacity;
 
             let filterStr = getFilterString(obj.filter, obj.filterStrength);
             if (animHue !== 0) filterStr += ` hue-rotate(${animHue}deg)`;
@@ -722,7 +719,6 @@
                 }
             } else if (obj.type === 'shape') {
                 ctx.fillStyle = obj.color;
-                ctx.globalAlpha *= (obj.opacity / 100);
                 if (obj.shapeType === 'rect') ctx.fillRect(-obj.width / 2, -obj.height / 2, obj.width, obj.height);
                 else if (obj.shapeType === 'circle') { ctx.beginPath(); ctx.ellipse(0, 0, obj.width / 2, obj.height / 2, 0, 0, 2 * Math.PI); ctx.fill(); }
             }
@@ -739,8 +735,8 @@
         switch (name) {
             case 'bw': return `grayscale(${strength}%)`;
             case 'blur': return `blur(${strength / 10}px)`;
-            case 'glitch': return `hue-rotate(${strength * 3.6}deg) saturate(${1 + strength / 50})`;
-            case 'cartoon': return `contrast(${1 + strength / 100}) saturate(${1 + strength / 100})`;
+            case 'glitch': return `hue-rotate(${strength * 3.6}deg) saturate(${1 + strength / 50}) drop-shadow(${strength/20}px ${strength/20}px 0px rgba(255,0,0,0.8)) drop-shadow(-${strength/20}px -${strength/20}px 0px rgba(0,255,255,0.8))`;
+            case 'cartoon': return `contrast(${1 + strength / 100}) saturate(${1 + strength / 100}) drop-shadow(2px 2px 0px rgba(0,0,0,0.8)) drop-shadow(-1px -1px 0px rgba(255,255,255,0.8))`;
             default: return '';
         }
     }
@@ -773,6 +769,7 @@
             filterStrengthInput.value = obj.filterStrength || 100;
             animationTypeSelect.value = obj.animationType || 'none';
             animationSpeedInput.value = obj.animationSpeed || 50;
+            layerOpacityInput.value = obj.opacity !== undefined ? obj.opacity : 100;
 
             if (obj.type === 'text') {
                 textInput.value = obj.text;
@@ -794,8 +791,22 @@
                 shapeWidthInput.value = Math.round(obj.width);
                 shapeHeightInput.value = Math.round(obj.height);
                 shapeColorPicker.value = obj.color;
-                shapeOpacityInput.value = obj.opacity;
             }
+
+            matchTargetSelect.innerHTML = '';
+            objects.forEach(o => {
+                if (o.id !== obj.id) {
+                    const opt = document.createElement('option');
+                    opt.value = o.id;
+                    opt.textContent = o.text || o.shapeType || 'Image';
+                    matchTargetSelect.appendChild(opt);
+                }
+            });
+            matchTargetSelect.disabled = matchTargetSelect.options.length === 0;
+            matchSizeBtn.disabled = matchTargetSelect.options.length === 0;
+            matchPosBtn.disabled = matchTargetSelect.options.length === 0;
+            matchBothBtn.disabled = matchTargetSelect.options.length === 0;
+
         } else {
             selectionPanel.classList.add('hidden');
             globalPanel.classList.remove('hidden');
@@ -1014,7 +1025,33 @@
         o.x = canvas.width / 2;
         o.y = canvas.height / 2;
         o.rotation = 0;
-        updateUI();
+    };
+
+    matchSizeBtn.onclick = () => {
+        const o = objects.find(obj => obj.id === selectedObjectId);
+        const target = objects.find(obj => obj.id === parseFloat(matchTargetSelect.value));
+        if (o && target) {
+            o.width = target.width;
+            o.height = target.height;
+            if (o.type === 'image') o.scale = o.width / o.img.width;
+            updateUI();
+        }
+    };
+
+    matchPosBtn.onclick = () => {
+        const o = objects.find(obj => obj.id === selectedObjectId);
+        const target = objects.find(obj => obj.id === parseFloat(matchTargetSelect.value));
+        if (o && target) {
+            o.x = target.x;
+            o.y = target.y;
+            o.rotation = target.rotation;
+            updateUI();
+        }
+    };
+
+    matchBothBtn.onclick = () => {
+        matchSizeBtn.onclick();
+        matchPosBtn.onclick();
     };
 
     applyTemplateBtn.onclick = () => {
@@ -1114,7 +1151,7 @@
     }
 
     // --- Input Listeners ---
-    [textInput, fontSizeInputNum, rotationInputNum, colorPicker, fontStyleSelect, outlineColorPicker, outlineWidthInput, textCurveInput, imageSizeInput, cropPanXInput, cropPanYInput, cropWidthInput, cropHeightInput, shapeTypeSelect, shapeWidthInput, shapeHeightInput, shapeColorPicker, shapeOpacityInput, filterSelect, filterStrengthInput, animationTypeSelect, animationSpeedInput].forEach(el => {
+    [textInput, fontSizeInputNum, rotationInputNum, colorPicker, fontStyleSelect, outlineColorPicker, outlineWidthInput, textCurveInput, imageSizeInput, cropPanXInput, cropPanYInput, cropWidthInput, cropHeightInput, shapeTypeSelect, shapeWidthInput, shapeHeightInput, shapeColorPicker, layerOpacityInput, filterSelect, filterStrengthInput, animationTypeSelect, animationSpeedInput].forEach(el => {
         el.oninput = () => {
             const o = objects.find(obj => obj.id === selectedObjectId); if (!o) return;
             if (el === textInput) { o.text = el.value; updateLayerList(); }
@@ -1133,7 +1170,7 @@
             if (el === shapeTypeSelect) { o.shapeType = el.value; updateLayerList(); }
             if (el === shapeWidthInput) o.width = parseFloat(el.value);
             if (el === shapeHeightInput) o.height = parseFloat(el.value);
-            if (el === shapeOpacityInput) o.opacity = parseFloat(el.value);
+            if (el === layerOpacityInput) o.opacity = parseFloat(el.value);
             if (el === filterSelect) o.filter = el.value;
             if (el === filterStrengthInput) o.filterStrength = parseFloat(el.value);
             if (el === animationTypeSelect) o.animationType = el.value;
@@ -1228,7 +1265,12 @@
             const t = timeOffset * speed;
             if (o.animationType === 'pulse') animScale = 1 + Math.sin(t) * 0.1;
             else if (o.animationType === 'float') animY = Math.sin(t) * 20;
+            else if (o.animationType === 'shake') { animX = (Math.random() - 0.5) * 5; animY = (Math.random() - 0.5) * 5; }
+            else if (o.animationType === 'rainbow') animHue = (timeOffset * speed * 10) % 360;
             else if (o.animationType === 'spin') animRotation = t * 50;
+            else if (o.animationType === 'blink') animOpacity = Math.floor(t * 5) % 2 === 0 ? 1 : 0;
+            else if (o.animationType === 'marquee') animX = (c.width / scale) - ((t * 150) % ((c.width / scale) * 2));
+            else if (o.animationType === 'slide') animX = Math.sin(t) * 100;
 
             let typewriterCharCount = Infinity;
             let displayText = o.text || '';
@@ -1253,6 +1295,7 @@
             tCtx.translate((o.x - minX + animX) * scale, (o.y - minY + animY) * scale);
             tCtx.rotate((o.rotation + animRotation) * Math.PI / 180);
             tCtx.scale(animScale * scale, animScale * scale);
+            tCtx.globalAlpha = (o.opacity !== undefined ? o.opacity / 100 : 1) * animOpacity;
             
             let fStr = getFilterString(o.filter, o.filterStrength);
             tCtx.filter = fStr || 'none';
@@ -1323,7 +1366,7 @@
                     }
                 }
             } else if (o.type === 'shape') {
-                tCtx.fillStyle = o.color; tCtx.globalAlpha = o.opacity / 100;
+                tCtx.fillStyle = o.color;
                 if (o.shapeType === 'rect') tCtx.fillRect(-o.width / 2, -o.height / 2, o.width, o.height);
                 else { tCtx.beginPath(); tCtx.ellipse(0, 0, o.width / 2, o.height / 2, 0, 0, 2 * Math.PI); tCtx.fill(); }
             }
@@ -1335,64 +1378,7 @@
     window.onresize = initializeCanvas;
     window.onload = () => { initializeCanvas(); updateUI(); };
     
-    // --- Theme Toggle ---
-    const themeToggle = document.getElementById('theme-toggle');
-    const themeMap = [
-        ['bg-white', 'bg-slate-800'],
-        ['bg-white/90', 'bg-slate-900/80'],
-        ['bg-white/80', 'bg-slate-800/80'],
-        ['bg-gray-50', 'bg-slate-900'],
-        ['bg-gray-100', 'bg-slate-800'],
-        ['border-gray-100', 'border-slate-700'],
-        ['border-gray-200', 'border-slate-600'],
-        ['text-gray-900', 'text-slate-100'],
-        ['text-gray-800', 'text-slate-200'],
-        ['text-gray-600', 'text-slate-300'],
-        ['text-gray-500', 'text-slate-400'],
-        ['text-gray-400', 'text-slate-500'],
-        ['hover:border-blue-500', 'hover:border-indigo-500'],
-        ['hover:text-blue-600', 'hover:text-indigo-400'],
-        ['bg-blue-50', 'bg-indigo-900/30'],
-        ['border-blue-200', 'border-indigo-500/50'],
-        ['hover:bg-gray-100', 'hover:bg-slate-700'],
-        ['hover:bg-gray-50', 'hover:bg-slate-700'],
-        ['hover:bg-gray-200', 'hover:bg-slate-700'],
-        ['from-gray-100', 'from-slate-800'],
-        ['via-gray-200', 'via-slate-900'],
-        ['to-gray-300', 'to-black']
-    ];
-    let isDark = false;
 
-    themeToggle.onclick = () => {
-        isDark = !isDark;
-        document.querySelectorAll('*').forEach(el => {
-            themeMap.forEach(([light, dark]) => {
-                if (isDark) {
-                    if (el.classList.contains(light)) {
-                        el.classList.remove(light);
-                        el.classList.add(dark);
-                        if (!el.dataset.themes) el.dataset.themes = '';
-                        el.dataset.themes += light + ',';
-                    }
-                } else {
-                    if (el.classList.contains(dark) && el.dataset.themes && el.dataset.themes.includes(light + ',')) {
-                        el.classList.remove(dark);
-                        el.classList.add(light);
-                        el.dataset.themes = el.dataset.themes.replace(light + ',', '');
-                    }
-                }
-            });
-        });
-        
-        if (isDark) {
-            themeToggle.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>`;
-        } else {
-            themeToggle.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
-        }
-    };
-    
-    // Auto-enable dark mode immediately to preserve current aesthetic
-    themeToggle.onclick();
     
     </script>
 </body>
