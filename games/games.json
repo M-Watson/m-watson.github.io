@@ -1,0 +1,16 @@
+[
+  {
+    "title": "Mastermind",
+    "slug": "mastermind",
+    "path": "games/mastermind/",
+    "summary": "Classic code-breaking game. Deduce the secret 4-color pattern in 10 attempts or less.",
+    "tags": ["Logic", "Code Breaking", "Single Player"]
+  },
+  {
+    "title": "Tower of Hanoi",
+    "slug": "tower-of-hanoi",
+    "path": "games/tower-of-hanoi/",
+    "summary": "The classic mathematical puzzle. Move disks between pegs without stacking a larger disk on a smaller one.",
+    "tags": ["Math Puzzle", "Algorithm", "Customizable"]
+  }
+]

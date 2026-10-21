@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Games | M-Watson</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <link rel="stylesheet" href="../static/style/style.css">
+    <link rel="stylesheet" href="../static/style/navbar.css">
+    <link rel="stylesheet" href="../static/style/card.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oxygen">
+    <style>
+      body {
+        font-family: 'Oxygen', 'avenir', sans-serif;
+        line-height: 1.6;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+      }
+      .page-header {
+        border-bottom: 2px solid #eee;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+      }
+      body.dark-mode .page-header {
+        border-color: #333;
+      }
+      .page-header h1 {
+        margin: 0 0 0.5rem 0;
+        font-size: 2.25rem;
+      }
+      .page-subtitle {
+        color: #666;
+        margin: 0;
+        font-size: 1.1rem;
+      }
+      body.dark-mode .page-subtitle {
+        color: #aaa;
+      }
+      .home-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-bottom: 2rem;
+        font-weight: bold;
+        text-decoration: none;
+      }
+      .home-link:hover {
+        text-decoration: underline;
+      }
+
+      /* Games Grid */
+      .games-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+        gap: 2rem;
+        margin-top: 1rem;
+      }
+
+      a.game-card, a.game-card:hover, a.game-card:visited, a.game-card:active {
+        text-decoration: none;
+      }
+      .game-card {
+        display: flex;
+        flex-direction: column;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        background: #ffffff;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        text-decoration: none;
+        color: inherit;
+      }
+      .game-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.12);
+        border-color: #cbd5e1;
+      }
+      body.dark-mode .game-card {
+        background-color: #1e1e1e !important;
+        border-color: #333;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      }
+      body.dark-mode .game-card:hover {
+        border-color: #555;
+        box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.5);
+      }
+
+      /* Game Visual Banners */
+      .game-banner {
+        height: 140px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .banner-mastermind {
+        background: linear-gradient(135deg, #312e81 0%, #4c1d95 50%, #581c87 100%);
+      }
+      .banner-hanoi {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+      }
+
+      /* Mastermind Banner Artwork */
+      .mm-preview {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(4px);
+        padding: 14px 20px;
+        border-radius: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      }
+      .mm-pegs {
+        display: flex;
+        gap: 10px;
+      }
+      .mm-peg {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        box-shadow: inset 0 -2px 4px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2);
+      }
+      .mm-divider {
+        width: 1px;
+        height: 24px;
+        background: rgba(255,255,255,0.3);
+      }
+      .mm-feedback {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+      }
+      .mm-fb-peg {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+      }
+
+      /* Tower of Hanoi Banner Artwork */
+      .hanoi-preview {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        gap: 28px;
+        height: 90px;
+        width: 240px;
+        padding-bottom: 8px;
+        border-bottom: 5px solid #94a3b8;
+        position: relative;
+      }
+      .hanoi-peg-col {
+        position: relative;
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
+        width: 60px;
+        height: 80px;
+      }
+      .hanoi-peg-col::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        width: 6px;
+        height: 75px;
+        background: #cbd5e1;
+        border-radius: 3px 3px 0 0;
+        z-index: 1;
+      }
+      .hanoi-disk {
+        height: 12px;
+        border-radius: 6px;
+        margin-bottom: 2px;
+        z-index: 2;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      }
+
+      /* Card Content */
+      .game-content {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+      }
+      .game-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+      }
+      .game-tag {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 3px 8px;
+        border-radius: 4px;
+        background-color: #f1f5f9;
+        color: #475569;
+      }
+      body.dark-mode .game-tag {
+        background-color: #2a2a2a;
+        color: #cbd5e1;
+      }
+      .game-title {
+        font-size: 1.4rem;
+        font-weight: bold;
+        margin: 0 0 0.5rem 0;
+        color: #0f172a;
+      }
+      body.dark-mode .game-title {
+        color: #f8fafc;
+      }
+      .game-desc {
+        font-size: 0.95rem;
+        color: #4b5563;
+        margin: 0 0 1.25rem 0;
+        flex-grow: 1;
+        line-height: 1.5;
+      }
+      body.dark-mode .game-desc {
+        color: #9ca3af;
+      }
+      .game-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid #f1f5f9;
+      }
+      body.dark-mode .game-footer {
+        border-color: #2a2a2a;
+      }
+      .play-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #ffffff !important;
+        background-color: #5b21b6;
+        border-radius: 6px;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+      }
+      .game-card:hover .play-btn {
+        background-color: #4c1d95;
+      }
+      .game-meta {
+        font-size: 0.85rem;
+        color: #888;
+      }
+      body.dark-mode .game-meta {
+        color: #777;
+      }
+
+      @media (max-width: 600px) {
+        .games-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+    <script>
+      if (localStorage.getItem("dark-mode") === "true") {
+        document.documentElement.classList.add("dark-mode");
+      }
+    </script>
+  </head>
+
+  <body class="ma0">
+    <script>
+      if (localStorage.getItem("dark-mode") === "true") {
+        document.body.classList.add("dark-mode");
+      }
+    </script>
+
+    <button class="night-mode-toggle" onclick="toggleDarkMode()" title="Toggle Night Mode">
+      <svg id="sun-icon" style="display:none" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      <svg id="moon-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </button>
+
+    <div>
+      <a href="../index.html" class="home-link">← Back to Home</a>
+
+      <header class="page-header">
+        <h1>Games & Puzzles</h1>
+        <p class="page-subtitle">A collection of interactive logic games, puzzles, and algorithms to challenge your mind.</p>
+      </header>
+
+      <main class="games-grid">
+        <!-- Mastermind Card -->
+        <a href="./mastermind/" class="game-card">
+          <div class="game-banner banner-mastermind">
+            <div class="mm-preview">
+              <div class="mm-pegs">
+                <span class="mm-peg" style="background-color: #ef4444;"></span>
+                <span class="mm-peg" style="background-color: #3b82f6;"></span>
+                <span class="mm-peg" style="background-color: #22c55e;"></span>
+                <span class="mm-peg" style="background-color: #eab308;"></span>
+              </div>
+              <div class="mm-divider"></div>
+              <div class="mm-feedback">
+                <span class="mm-fb-peg" style="background-color: #111;"></span>
+                <span class="mm-fb-peg" style="background-color: #fff;"></span>
+                <span class="mm-fb-peg" style="background-color: #111;"></span>
+                <span class="mm-fb-peg" style="background-color: rgba(255,255,255,0.2);"></span>
+              </div>
+            </div>
+          </div>
+          <div class="game-content">
+            <div class="game-tags">
+              <span class="game-tag">Logic</span>
+              <span class="game-tag">Code Breaking</span>
+              <span class="game-tag">Single Player</span>
+            </div>
+            <h2 class="game-title">Mastermind</h2>
+            <p class="game-desc">
+              Can you crack the code? Deduce the secret 4-color pattern in 10 guesses or fewer using feedback pegs that indicate correct colors and exact positions.
+            </p>
+            <div class="game-footer">
+              <span class="game-meta">10 Attempts · 6 Colors</span>
+              <span class="play-btn">Play Now →</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Tower of Hanoi Card -->
+        <a href="./tower-of-hanoi/" class="game-card">
+          <div class="game-banner banner-hanoi">
+            <div class="hanoi-preview">
+              <div class="hanoi-peg-col">
+                <span class="hanoi-disk" style="width: 54px; background: #ef4444;"></span>
+                <span class="hanoi-disk" style="width: 42px; background: #3b82f6;"></span>
+                <span class="hanoi-disk" style="width: 30px; background: #22c55e;"></span>
+                <span class="hanoi-disk" style="width: 18px; background: #eab308;"></span>
+              </div>
+              <div class="hanoi-peg-col"></div>
+              <div class="hanoi-peg-col"></div>
+            </div>
+          </div>
+          <div class="game-content">
+            <div class="game-tags">
+              <span class="game-tag">Math Puzzle</span>
+              <span class="game-tag">Algorithm</span>
+              <span class="game-tag">Customizable</span>
+            </div>
+            <h2 class="game-title">Tower of Hanoi</h2>
+            <p class="game-desc">
+              The legendary mathematical puzzle. Transfer the entire stack of disks to another peg one move at a time without ever placing a larger disk onto a smaller one.
+            </p>
+            <div class="game-footer">
+              <span class="game-meta">Custom Disks & Pegs</span>
+              <span class="play-btn">Play Now →</span>
+            </div>
+          </div>
+        </a>
+      </main>
+
+      <footer class="mt5 gray" style="text-align: center; margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid #eee;">
+        &copy; M-Watson 2026
+      </footer>
+    </div>
+
+    <script>
+      function toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
+        const isDark = document.body.classList.contains("dark-mode");
+        localStorage.setItem("dark-mode", isDark);
+        updateIcons(isDark);
+      }
+
+      function updateIcons(isDark) {
+        document.getElementById('sun-icon').style.display = isDark ? 'block' : 'none';
+        document.getElementById('moon-icon').style.display = isDark ? 'none' : 'block';
+      }
+
+      if (localStorage.getItem("dark-mode") === "true") {
+        updateIcons(true);
+      }
+    </script>
+  </body>
+</html>

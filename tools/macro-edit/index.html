@@ -32,8 +32,8 @@
         .sidebar.collapsed {
             transform: translateX(-100%);
         }
-        #sidebar-toggle {
-            position: fixed;
+        #macro-editor-view #sidebar-toggle {
+            position: absolute;
             top: 1rem;
             left: 1rem;
             z-index: 50;
@@ -85,7 +85,39 @@
 </head>
 <body class="bg-gray-100 text-gray-800 antialiased selection:bg-blue-600 selection:text-white">
 
-    <div class="flex h-screen">
+    <!-- Main Application Shell -->
+    <div class="flex flex-col h-screen overflow-hidden">
+        <!-- Top App Navigation Bar -->
+        <header id="main-header" class="h-12 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-4 flex-shrink-0 z-30 select-none text-white">
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-2">
+                    <span class="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                    </span>
+                    <span class="font-bold text-sm tracking-tight text-white hidden sm:inline">Macro Edit</span>
+                </div>
+
+                <!-- Tab Switcher Buttons -->
+                <div class="flex bg-slate-800/90 p-1 rounded-lg border border-slate-700/60 ml-2">
+                    <button id="tab-btn-macro" class="tab-btn flex items-center space-x-2 px-3 py-1 text-xs font-semibold rounded-md transition-all text-white bg-indigo-600 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+                        <span>Text & Media Overlay</span>
+                    </button>
+                    <button id="tab-btn-wallpaper" class="tab-btn flex items-center space-x-2 px-3 py-1 text-xs font-semibold rounded-md transition-all text-slate-400 hover:text-slate-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        <span>Wallpaper Studio</span>
+                        <span class="bg-gradient-to-r from-pink-500 to-rose-500 text-[9px] text-white px-1.5 py-0.2 rounded-full font-bold uppercase tracking-wider">New</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3 text-xs text-slate-400">
+                <span class="hidden md:inline font-medium text-slate-400">Multi-Image Wallpaper Layout, Mask & Compositor</span>
+            </div>
+        </header>
+
+        <!-- Tab 1: Macro Edit View -->
+        <div id="macro-editor-view" class="flex-grow flex h-[calc(100vh-3rem)] overflow-hidden relative">
         <!-- Left Panel: Controls -->
         <!-- Use arbitrary values for glassmorphism -->
         <div id="sidebar" class="sidebar w-80 bg-white/90 backdrop-blur-2xl shadow-2xl overflow-y-auto flex-shrink-0 flex flex-col z-20 border-r border-gray-200">
@@ -411,7 +443,571 @@
                 </button>
             </div>
         </div>
-    </div>
+        </div>
+
+        <!-- Tab 2: Wallpaper Studio View -->
+        <div id="wallpaper-editor-view" class="flex-grow flex h-[calc(100vh-3rem)] overflow-hidden relative hidden">
+            <!-- Left Sidebar: Tools & Properties -->
+            <div id="wp-sidebar" class="sidebar w-80 bg-slate-900 border-r border-slate-800 text-slate-200 flex flex-col z-20 flex-shrink-0 shadow-2xl">
+                <!-- Sidebar Header -->
+                <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-sm font-bold text-white tracking-wide flex items-center space-x-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            <span>Wallpaper Studio</span>
+                        </h2>
+                        <p class="text-[11px] text-slate-400">Layout, Mask & Multi-Image Merger</p>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <input type="file" id="wp-add-photos-input" class="hidden" accept="image/*" multiple />
+                        <button id="wp-add-photos-btn" class="px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-xs font-semibold flex items-center space-x-1 shadow-sm transition-all" title="Add Images">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                            <span>Add</span>
+                        </button>
+                        <button id="wp-demo-photos-btn" class="px-2 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-md text-xs font-semibold border border-slate-700 transition-all" title="Load Sample Demo Photos">
+                            Demo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sidebar Tool Tabs -->
+                <div class="grid grid-cols-5 border-b border-slate-800 bg-slate-950/40 p-1 gap-1">
+                    <button class="wp-sidebar-tab flex flex-col items-center justify-center py-1.5 px-1 rounded-md text-[10px] font-semibold transition-all bg-indigo-600 text-white shadow-sm" data-tab="layers">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                        <span class="mt-0.5">Layers</span>
+                    </button>
+                    <button class="wp-sidebar-tab flex flex-col items-center justify-center py-1.5 px-1 rounded-md text-[10px] font-semibold transition-all text-slate-400 hover:text-slate-200" data-tab="layout">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+                        <span class="mt-0.5">Layout</span>
+                    </button>
+                    <button class="wp-sidebar-tab flex flex-col items-center justify-center py-1.5 px-1 rounded-md text-[10px] font-semibold transition-all text-slate-400 hover:text-slate-200" data-tab="mask">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20Z"/></svg>
+                        <span class="mt-0.5">Mask</span>
+                    </button>
+                    <button class="wp-sidebar-tab flex flex-col items-center justify-center py-1.5 px-1 rounded-md text-[10px] font-semibold transition-all text-slate-400 hover:text-slate-200" data-tab="adjust">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                        <span class="mt-0.5">Adjust</span>
+                    </button>
+                    <button class="wp-sidebar-tab flex flex-col items-center justify-center py-1.5 px-1 rounded-md text-[10px] font-semibold transition-all text-slate-400 hover:text-slate-200" data-tab="crop">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>
+                        <span class="mt-0.5">Crop</span>
+                    </button>
+                </div>
+
+                <!-- Tab Panels Area -->
+                <div class="flex-grow overflow-y-auto p-4 space-y-4 custom-scrollbar text-xs">
+                    <!-- Universal Multi-Layer Edit Banner (visible when >= 2 layers are selected) -->
+                    <div id="wp-multi-edit-banner" class="bg-indigo-950/80 border border-indigo-500/40 rounded-lg p-2.5 text-indigo-200 text-xs hidden shadow-lg transition-all">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-1.5">
+                                <span class="text-indigo-400 text-sm">⚡</span>
+                                <span class="font-bold text-white">Universal Edit Mode</span>
+                                <span id="wp-multi-edit-count" class="px-1.5 py-0.2 rounded-full text-[10px] bg-indigo-500 text-white font-extrabold">2</span>
+                            </div>
+                            <button id="wp-banner-clear-btn" class="text-[10px] text-indigo-300 hover:text-white underline">Clear</button>
+                        </div>
+                        <p class="text-[10px] text-indigo-300/80 mt-1">Changes to filters, masks, colors, sizing & transforms apply to all selected layers!</p>
+                    </div>
+
+                    <!-- TAB 1: LAYERS -->
+                    <div id="wp-tab-layers" class="wp-tab-panel space-y-4">
+                        <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Layer Stack</span>
+                            <div class="flex items-center space-x-1">
+                                <button id="wp-bring-forward-btn" class="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded disabled:opacity-30" title="Bring Forward">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+                                </button>
+                                <button id="wp-send-backward-btn" class="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded disabled:opacity-30" title="Send Backward">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                                </button>
+                                <button id="wp-duplicate-layer-btn" class="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded disabled:opacity-30" title="Duplicate Layer">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                </button>
+                                <button id="wp-merge-selected-btn" class="p-1 text-indigo-400 hover:text-indigo-300 hover:bg-slate-800 rounded disabled:opacity-30 hidden" title="Merge Selected Layers into Single Layer">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                                </button>
+                                <button id="wp-delete-layer-btn" class="p-1 text-red-400 hover:text-red-300 hover:bg-slate-800 rounded disabled:opacity-30" title="Delete Selected Layer(s)">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Select All / Some Toolbar -->
+                        <div class="flex items-center justify-between bg-slate-950/70 p-1.5 rounded-lg border border-slate-800">
+                            <div class="flex items-center space-x-1">
+                                <button id="wp-select-all-btn" class="px-2 py-1 bg-slate-800 hover:bg-indigo-600 hover:text-white text-slate-300 rounded text-[11px] font-medium transition-all flex items-center space-x-1" title="Select All Layers (Ctrl+A)">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                                    <span>Select All</span>
+                                </button>
+                                <button id="wp-select-none-btn" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 rounded text-[11px] font-medium transition-all" title="Deselect All (Esc)">
+                                    Clear
+                                </button>
+                            </div>
+                            <div id="wp-multi-select-indicator" class="text-[10px] font-semibold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full border border-indigo-500/20 hidden">
+                                <span id="wp-selected-count">0</span> selected
+                            </div>
+                        </div>
+
+                        <!-- Layers List Container -->
+                        <div id="wp-layers-list" class="space-y-1.5 max-h-56 overflow-y-auto custom-scrollbar">
+                            <!-- Injected dynamically -->
+                        </div>
+                        <div id="wp-no-layers-msg" class="text-center py-6 border-2 border-dashed border-slate-800 rounded-lg text-slate-500">
+                            <p class="text-xs">No images loaded yet.</p>
+                            <p class="text-[10px] mt-1 text-slate-600">Click Add or Demo to start.</p>
+                        </div>
+
+                        <!-- Alignment & Distribution -->
+                        <div class="pt-3 border-t border-slate-800 space-y-2">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Align Selected</span>
+                            <div class="grid grid-cols-6 gap-1">
+                                <button id="wp-align-left" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-center" title="Align Left">
+                                    <svg class="mx-auto" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="3"/><rect x="8" y="6" width="12" height="4" rx="1"/><rect x="8" y="14" width="8" height="4" rx="1"/></svg>
+                                </button>
+                                <button id="wp-align-center-h" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-center" title="Center Horizontally">
+                                    <svg class="mx-auto" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="21" x2="12" y2="3"/><rect x="6" y="6" width="12" height="4" rx="1"/><rect x="8" y="14" width="8" height="4" rx="1"/></svg>
+                                </button>
+                                <button id="wp-align-right" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-center" title="Align Right">
+                                    <svg class="mx-auto" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="20" y1="21" x2="20" y2="3"/><rect x="4" y="6" width="12" height="4" rx="1"/><rect x="8" y="14" width="8" height="4" rx="1"/></svg>
+                                </button>
+                                <button id="wp-align-top" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-center" title="Align Top">
+                                    <svg class="mx-auto" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="4" x2="21" y2="4"/><rect x="6" y="8" width="4" height="12" rx="1"/><rect x="14" y="8" width="4" height="8" rx="1"/></svg>
+                                </button>
+                                <button id="wp-align-center-v" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-center" title="Center Vertically">
+                                    <svg class="mx-auto" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><rect x="6" y="6" width="4" height="12" rx="1"/><rect x="14" y="8" width="4" height="8" rx="1"/></svg>
+                                </button>
+                                <button id="wp-align-bottom" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-center" title="Align Bottom">
+                                    <svg class="mx-auto" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="20" x2="21" y2="20"/><rect x="6" y="4" width="4" height="12" rx="1"/><rect x="14" y="8" width="4" height="8" rx="1"/></svg>
+                                </button>
+                            </div>
+                            <button id="wp-distribute-h" class="w-full py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs font-medium transition-all" title="Distribute all layers evenly across wallpaper">
+                                Distribute Horizontally
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: LAYOUT -->
+                    <div id="wp-tab-layout" class="wp-tab-panel hidden space-y-4">
+                        <div>
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Wallpaper Layout Presets</span>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button class="wp-layout-preset-btn p-2.5 bg-slate-800 hover:bg-indigo-900/60 hover:border-indigo-500 border border-slate-700 rounded-lg text-left transition-all group" data-layout="panoramic">
+                                    <span class="font-bold text-white block text-xs group-hover:text-indigo-300">Panoramic Blend</span>
+                                    <span class="text-[10px] text-slate-400">Soft gradient merge</span>
+                                </button>
+                                <button class="wp-layout-preset-btn p-2.5 bg-slate-800 hover:bg-indigo-900/60 hover:border-indigo-500 border border-slate-700 rounded-lg text-left transition-all group" data-layout="triptych">
+                                    <span class="font-bold text-white block text-xs group-hover:text-indigo-300">3-Panel Triptych</span>
+                                    <span class="text-[10px] text-slate-400">Equal thirds</span>
+                                </button>
+                                <button class="wp-layout-preset-btn p-2.5 bg-slate-800 hover:bg-indigo-900/60 hover:border-indigo-500 border border-slate-700 rounded-lg text-left transition-all group" data-layout="split-2">
+                                    <span class="font-bold text-white block text-xs group-hover:text-indigo-300">2-Panel Split</span>
+                                    <span class="text-[10px] text-slate-400">50% | 50%</span>
+                                </button>
+                                <button class="wp-layout-preset-btn p-2.5 bg-slate-800 hover:bg-indigo-900/60 hover:border-indigo-500 border border-slate-700 rounded-lg text-left transition-all group" data-layout="hero-3">
+                                    <span class="font-bold text-white block text-xs group-hover:text-indigo-300">Hero Center</span>
+                                    <span class="text-[10px] text-slate-400">25% | 50% | 25%</span>
+                                </button>
+                                <button class="wp-layout-preset-btn p-2.5 bg-slate-800 hover:bg-indigo-900/60 hover:border-indigo-500 border border-slate-700 rounded-lg text-left transition-all group" data-layout="quad-4">
+                                    <span class="font-bold text-white block text-xs group-hover:text-indigo-300">4-Panel Quad</span>
+                                    <span class="text-[10px] text-slate-400">4 vertical columns</span>
+                                </button>
+                                <button class="wp-layout-preset-btn p-2.5 bg-slate-800 hover:bg-indigo-900/60 hover:border-indigo-500 border border-slate-700 rounded-lg text-left transition-all group" data-layout="grid-2x2">
+                                    <span class="font-bold text-white block text-xs group-hover:text-indigo-300">2x2 Grid</span>
+                                    <span class="text-[10px] text-slate-400">4 tiles</span>
+                                </button>
+                                <button class="wp-layout-preset-btn col-span-2 p-2.5 bg-slate-800 hover:bg-indigo-900/60 hover:border-indigo-500 border border-slate-700 rounded-lg text-left transition-all group" data-layout="polaroid">
+                                    <span class="font-bold text-white block text-xs group-hover:text-indigo-300">Polaroid Collage</span>
+                                    <span class="text-[10px] text-slate-400">Tilted floating cards with shadows & borders</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Spacing & Frame Parameters -->
+                        <div class="pt-3 border-t border-slate-800 space-y-3">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Layout Spacing & Style</span>
+                            
+                            <div>
+                                <div class="flex justify-between text-slate-400 text-[10px] mb-1">
+                                    <span>Panel Gap</span>
+                                </div>
+                                <input type="range" id="wp-layout-gap" min="0" max="80" value="24" class="w-full h-1 bg-slate-700 accent-indigo-500 rounded" />
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-slate-400 text-[10px] mb-1">
+                                    <span>Outer Margin</span>
+                                </div>
+                                <input type="range" id="wp-layout-margin" min="0" max="120" value="40" class="w-full h-1 bg-slate-700 accent-indigo-500 rounded" />
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-slate-400 text-[10px] mb-1">
+                                    <span>Corner Radius</span>
+                                </div>
+                                <input type="range" id="wp-layout-radius" min="0" max="60" value="16" class="w-full h-1 bg-slate-700 accent-indigo-500 rounded" />
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="text-[10px] text-slate-400 block mb-1">Border Width</label>
+                                    <input type="number" id="wp-layout-border-width" min="0" max="30" value="0" class="w-full bg-slate-800 border border-slate-700 rounded p-1 text-xs text-white" />
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-400 block mb-1">Border Color</label>
+                                    <input type="color" id="wp-layout-border-color" value="#ffffff" class="w-full h-7 bg-slate-800 border border-slate-700 rounded p-0.5 cursor-pointer" />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="text-[10px] text-slate-400 block mb-1">Drop Shadow</label>
+                                <select id="wp-layout-shadow" class="w-full bg-slate-800 border border-slate-700 rounded p-1.5 text-xs text-white">
+                                    <option value="none">None</option>
+                                    <option value="soft" selected>Soft Shadow</option>
+                                    <option value="deep">Deep Shadow</option>
+                                    <option value="neon-cyan">Neon Cyan Glow</option>
+                                    <option value="neon-purple">Neon Purple Glow</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: MASKING & BLEND -->
+                    <div id="wp-tab-mask" class="wp-tab-panel hidden space-y-4">
+                        <div>
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Mask Shape & Direction</span>
+                            <select id="wp-mask-type" class="w-full bg-slate-800 border border-slate-700 rounded p-2 text-xs text-white">
+                                <option value="none">None (Full Rectangle)</option>
+                                <optgroup label="Feathered Fade (Great for Merging)">
+                                    <option value="fade-right">Fade Right Edge</option>
+                                    <option value="fade-left">Fade Left Edge</option>
+                                    <option value="fade-both">Fade Both Sides (Merge Panorama)</option>
+                                    <option value="fade-top">Fade Top Edge</option>
+                                    <option value="fade-bottom">Fade Bottom Edge</option>
+                                    <option value="radial-fade">Radial Vignette Fade</option>
+                                </optgroup>
+                                <optgroup label="Geometric & Creative Shapes">
+                                    <option value="rounded-rect">Rounded Rectangle</option>
+                                    <option value="circle">Circle / Oval</option>
+                                    <option value="hexagon">Hexagon</option>
+                                    <option value="diagonal-slash">Diagonal Slash</option>
+                                    <option value="diamond">Diamond</option>
+                                    <option value="star">5-Point Star</option>
+                                    <option value="heart">Heart</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-slate-400 text-[10px] mb-1">
+                                <span>Feather Softness</span>
+                                <span id="wp-mask-feather-val" class="text-indigo-400">30%</span>
+                            </div>
+                            <input type="range" id="wp-mask-feather" min="0" max="100" value="30" class="w-full h-1 bg-slate-700 accent-indigo-500 rounded" />
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-slate-400 text-[10px] mb-1">
+                                <span>Mask Corner Radius</span>
+                                <span id="wp-mask-radius-val" class="text-indigo-400">16px</span>
+                            </div>
+                            <input type="range" id="wp-mask-radius" min="0" max="100" value="16" class="w-full h-1 bg-slate-700 accent-indigo-500 rounded" />
+                        </div>
+
+                        <div class="flex items-center space-x-2">
+                            <label class="flex items-center text-slate-300 text-xs cursor-pointer select-none">
+                                <input type="checkbox" id="wp-mask-invert" class="mr-1.5 rounded bg-slate-800 border-slate-700 text-indigo-600 focus:ring-indigo-500" />
+                                <span>Invert Mask (Show outside)</span>
+                            </label>
+                        </div>
+
+                        <div class="pt-3 border-t border-slate-800 space-y-3">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Blending & Opacity</span>
+                            
+                            <div>
+                                <label class="text-[10px] text-slate-400 block mb-1">Blend Mode (globalCompositeOperation)</label>
+                                <select id="wp-blend-mode" class="w-full bg-slate-800 border border-slate-700 rounded p-1.5 text-xs text-white">
+                                    <option value="source-over" selected>Normal</option>
+                                    <option value="screen">Screen (Lighten / Glow)</option>
+                                    <option value="multiply">Multiply (Darken / Shadow)</option>
+                                    <option value="overlay">Overlay (High Contrast)</option>
+                                    <option value="soft-light">Soft Light (Subtle Merge)</option>
+                                    <option value="hard-light">Hard Light (Punchy)</option>
+                                    <option value="color-dodge">Color Dodge (Intense Glow)</option>
+                                    <option value="darken">Darken</option>
+                                    <option value="lighten">Lighten</option>
+                                    <option value="difference">Difference</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-slate-400 text-[10px] mb-1">
+                                    <span>Layer Opacity</span>
+                                    <span id="wp-layer-opacity-val" class="text-indigo-400">100%</span>
+                                </div>
+                                <input type="range" id="wp-layer-opacity" min="0" max="100" value="100" class="w-full h-1 bg-slate-700 accent-indigo-500 rounded" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 4: ADJUSTMENTS & FILTERS -->
+                    <div id="wp-tab-adjust" class="wp-tab-panel hidden space-y-3">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <label class="text-[10px] text-slate-400">Color Aesthetic Preset</label>
+                                <button id="wp-reset-adj-btn" class="text-[10px] text-indigo-400 hover:underline">Reset</button>
+                            </div>
+                            <select id="wp-filter-preset" class="w-full bg-slate-800 border border-slate-700 rounded p-1.5 text-xs text-white">
+                                <option value="none">None / Original</option>
+                                <option value="cyberpunk">Cyberpunk Neon</option>
+                                <option value="cinematic">Cinematic Teal & Orange</option>
+                                <option value="moody">Moody Dark Contrast</option>
+                                <option value="warm">Warm Golden Hour</option>
+                                <option value="bw">B&W Monochrome</option>
+                                <option value="vintage">Vintage Film</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-slate-400 text-[10px] mb-1">
+                                <span>Brightness</span>
+                                <span id="wp-adj-brightness-val" class="text-indigo-400">0%</span>
+                            </div>
+                            <input type="range" id="wp-adj-brightness" min="-100" max="100" value="0" class="w-full h-1 bg-slate-700 accent-indigo-500 rounded" />
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-slate-400 text-[10px] mb-1">
+                                <span>Contrast</span>
+                                <span id="wp-adj-contrast-val" class="text-indigo-400">0%</span>
+                            </div>
+                            <input type="range" id="wp-adj-contrast" min="-100" max="100" value="0" class="w-full h-1 bg-slate-700 accent-indigo-500 rounded" />
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-slate-400 text-[10px] mb-1">
+                                <span>Saturation</span>
+                                <span id="wp-adj-saturation-val" class="text-indigo-400">0%</span>
+                            </div>
+                            <input type="range" id="wp-adj-saturation" min="-100" max="100" value="0" class="w-full h-1 bg-slate-700 accent-indigo-500 rounded" />
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-slate-400 text-[10px] mb-1">
+                                <span>Warmth</span>
+                                <span id="wp-adj-warmth-val" class="text-indigo-400">0</span>
+                            </div>
+                            <input type="range" id="wp-adj-warmth" min="-50" max="50" value="0" class="w-full h-1 bg-slate-700 accent-indigo-500 rounded" />
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-slate-400 text-[10px] mb-1">
+                                <span>Hue Rotate</span>
+                                <span id="wp-adj-hue-val" class="text-indigo-400">0°</span>
+                            </div>
+                            <input type="range" id="wp-adj-hue" min="0" max="360" value="0" class="w-full h-1 bg-slate-700 accent-indigo-500 rounded" />
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-slate-400 text-[10px] mb-1">
+                                <span>Blur</span>
+                                <span id="wp-adj-blur-val" class="text-indigo-400">0px</span>
+                            </div>
+                            <input type="range" id="wp-adj-blur" min="0" max="40" value="0" class="w-full h-1 bg-slate-700 accent-indigo-500 rounded" />
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-slate-400 text-[10px] mb-1">
+                                <span>Vignette Edge</span>
+                                <span id="wp-adj-vignette-val" class="text-indigo-400">0%</span>
+                            </div>
+                            <input type="range" id="wp-adj-vignette" min="0" max="100" value="0" class="w-full h-1 bg-slate-700 accent-indigo-500 rounded" />
+                        </div>
+                    </div>
+
+                    <!-- TAB 5: CROP & TRANSFORM -->
+                    <div id="wp-tab-crop" class="wp-tab-panel hidden space-y-4">
+                        <div>
+                            <button id="wp-toggle-crop-mode" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-xs font-bold transition-all shadow-sm">
+                                Crop Image (Interactive)
+                            </button>
+                            <p class="text-[10px] text-slate-500 mt-1 text-center">Or double-click image on canvas to crop</p>
+                        </div>
+
+                        <div class="space-y-3 pt-2 border-t border-slate-800">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">In-Frame Pan & Zoom</span>
+                            
+                            <div>
+                                <div class="flex justify-between text-slate-400 text-[10px] mb-1">
+                                    <span>Zoom Inside Frame</span>
+                                    <span id="wp-crop-zoom-val" class="text-indigo-400">100%</span>
+                                </div>
+                                <input type="range" id="wp-crop-zoom" min="0.5" max="3.0" step="0.05" value="1.0" class="w-full h-1 bg-slate-700 accent-indigo-500 rounded" />
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="text-[10px] text-slate-400 block mb-1">Pan X</label>
+                                    <input type="range" id="wp-crop-pan-x" min="-50" max="50" value="0" class="w-full h-1 bg-slate-700 accent-indigo-500 rounded" />
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-400 block mb-1">Pan Y</label>
+                                    <input type="range" id="wp-crop-pan-y" min="-50" max="50" value="0" class="w-full h-1 bg-slate-700 accent-indigo-500 rounded" />
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2 pt-2">
+                                <button id="wp-flip-h-btn" class="py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs font-medium">Flip Horizontal</button>
+                                <button id="wp-flip-v-btn" class="py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs font-medium">Flip Vertical</button>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <button id="wp-fit-frame-btn" class="py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs font-medium">Fit Aspect</button>
+                                <button id="wp-fill-frame-btn" class="py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs font-medium">Stretch Fill</button>
+                            </div>
+
+                            <button id="wp-reset-crop-btn" class="w-full py-1 text-slate-500 hover:text-slate-300 text-[11px]">Reset Frame Framing</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Sticky Action -->
+                <div class="p-3 border-t border-slate-800 bg-slate-950/60 flex items-center justify-between">
+                    <button id="wp-merge-all-btn" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 py-1.5 px-3 rounded-md text-xs font-medium flex items-center justify-center space-x-1.5 transition-all" title="Merge All Visible Layers into a Single Image">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                        <span>Merge All Visible Layers</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Workspace: Top Bar + Viewport Canvas -->
+            <div class="flex-grow flex flex-col h-full overflow-hidden bg-slate-950">
+                <!-- Top Wallpaper Toolbar -->
+                <div class="h-12 bg-slate-900 border-b border-slate-800 px-4 flex items-center justify-between flex-shrink-0 z-10 text-xs">
+                    <!-- Left: Wallpaper Preset Resolution & Background -->
+                    <div class="flex items-center space-x-3">
+                        <div class="flex items-center space-x-1.5">
+                            <span class="text-slate-400 font-medium hidden lg:inline">Wallpaper:</span>
+                            <select id="wp-preset-select" class="bg-slate-800 text-white border border-slate-700 rounded-md px-2 py-1 text-xs focus:ring-1 focus:ring-indigo-500">
+                                <optgroup label="Ultrawide & Multi-Monitor">
+                                    <option value="3440x1440" selected>Ultrawide 21:9 (3440 × 1440)</option>
+                                    <option value="2560x1080">WFHD 21:9 (2560 × 1080)</option>
+                                    <option value="5120x1440">Super Ultrawide 32:9 (5120 × 1440)</option>
+                                    <option value="3840x1080">Dual Monitor (3840 × 1080)</option>
+                                    <option value="5760x1080">Triple Monitor (5760 × 1080)</option>
+                                </optgroup>
+                                <optgroup label="Standard Widescreen">
+                                    <option value="3840x2160">4K UHD 16:9 (3840 × 2160)</option>
+                                    <option value="2560x1440">2K QHD 16:9 (2560 × 1440)</option>
+                                    <option value="1920x1080">1080p FHD 16:9 (1920 × 1080)</option>
+                                </optgroup>
+                                <optgroup label="Laptop & Custom">
+                                    <option value="2560x1600">MacBook 16:10 (2560 × 1600)</option>
+                                    <option value="custom">Custom Size...</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <!-- Custom Size Inputs -->
+                        <div id="wp-custom-size-box" class="hidden flex items-center space-x-1">
+                            <input type="number" id="wp-custom-width" placeholder="W" class="w-16 bg-slate-800 border border-slate-700 text-white rounded px-1.5 py-0.5 text-xs text-center" value="3440" />
+                            <span class="text-slate-500">×</span>
+                            <input type="number" id="wp-custom-height" placeholder="H" class="w-16 bg-slate-800 border border-slate-700 text-white rounded px-1.5 py-0.5 text-xs text-center" value="1440" />
+                            <button id="wp-apply-custom-size" class="px-2 py-0.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-xs font-medium">Apply</button>
+                        </div>
+
+                        <div class="h-4 w-[1px] bg-slate-800 hidden md:block"></div>
+
+                        <!-- Backdrop -->
+                        <div class="hidden sm:flex items-center space-x-1.5">
+                            <span class="text-slate-400 font-medium">Backdrop:</span>
+                            <select id="wp-bg-type-select" class="bg-slate-800 text-white border border-slate-700 rounded-md px-2 py-1 text-xs">
+                                <option value="gradient" selected>Gradient</option>
+                                <option value="color">Solid Color</option>
+                                <option value="blur">Blurred Photo</option>
+                            </select>
+                            <div id="wp-bg-gradient-box" class="flex items-center">
+                                <select id="wp-bg-gradient-select" class="bg-slate-800 text-white border border-slate-700 rounded-md px-2 py-1 text-xs">
+                                    <option value="nebula">Midnight Nebula</option>
+                                    <option value="sunset">Sunset Horizon</option>
+                                    <option value="cyberpunk">Cyberpunk Dusk</option>
+                                    <option value="aurora">Aurora Borealis</option>
+                                    <option value="charcoal">Charcoal Minimal</option>
+                                    <option value="studio">Slate Studio</option>
+                                </select>
+                            </div>
+                            <div id="wp-bg-color-box" class="hidden flex items-center">
+                                <input type="color" id="wp-bg-color-picker" value="#090d16" class="w-7 h-7 p-0.5 bg-slate-800 border border-slate-700 rounded cursor-pointer" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Zoom Controls, History, & Export -->
+                    <div class="flex items-center space-x-2">
+                        <!-- Undo / Redo -->
+                        <div class="flex items-center bg-slate-800/80 rounded-md border border-slate-700/60 p-0.5">
+                            <button id="wp-undo-btn" class="p-1 hover:text-white text-slate-400 disabled:opacity-40" title="Undo (Ctrl+Z)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+                            </button>
+                            <button id="wp-redo-btn" class="p-1 hover:text-white text-slate-400 disabled:opacity-40" title="Redo (Ctrl+Y)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/></svg>
+                            </button>
+                        </div>
+
+                        <div class="h-4 w-[1px] bg-slate-800"></div>
+
+                        <!-- Zoom -->
+                        <div class="flex items-center space-x-1 bg-slate-800/80 rounded-md border border-slate-700/60 px-2 py-0.5">
+                            <button id="wp-zoom-out-btn" class="text-slate-400 hover:text-white p-0.5 text-xs">-</button>
+                            <input type="range" id="wp-zoom-slider" min="0.1" max="1.5" step="0.05" value="0.35" class="w-16 h-1 bg-slate-700 accent-indigo-500 rounded cursor-pointer" />
+                            <button id="wp-zoom-in-btn" class="text-slate-400 hover:text-white p-0.5 text-xs">+</button>
+                            <button id="wp-zoom-fit-btn" class="text-slate-300 hover:text-white font-medium px-1 text-[11px] underline">Fit</button>
+                            <span id="wp-zoom-value-label" class="text-[10px] text-slate-400 w-8 text-right">35%</span>
+                        </div>
+
+                        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+
+                        <!-- Quick Copy to Clipboard -->
+                        <button id="wp-copy-clipboard-btn" class="hidden sm:flex px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-md text-xs font-medium items-center space-x-1" title="Copy high-res wallpaper image to clipboard">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>Copy</span>
+                        </button>
+
+                        <!-- Export Dropdown & Button -->
+                        <div class="flex items-center bg-indigo-600 rounded-md shadow-sm">
+                            <select id="wp-export-format" class="bg-indigo-700 text-white text-xs font-semibold px-2 py-1.5 rounded-l-md border-r border-indigo-500 focus:outline-none">
+                                <option value="image/png">PNG</option>
+                                <option value="image/jpeg">JPG</option>
+                                <option value="image/webp">WebP</option>
+                            </select>
+                            <select id="wp-export-scale" class="bg-indigo-700 text-white text-xs font-semibold px-2 py-1.5 border-r border-indigo-500 focus:outline-none hidden md:inline-block">
+                                <option value="1">1x Native</option>
+                                <option value="1.5">1.5x HD</option>
+                                <option value="2">2x Ultra</option>
+                            </select>
+                            <button id="wp-export-btn" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-r-md flex items-center space-x-1 transition-all">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                <span class="hidden sm:inline">Export Wallpaper</span>
+                                <span class="sm:hidden">Export</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Center Viewport -->
+                <div id="wp-viewport" class="flex-grow overflow-auto relative p-8 flex items-center justify-center bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] bg-slate-950 select-none">
+                    <canvas id="wp-canvas" class="shadow-[0_0_60px_rgba(0,0,0,0.8)] border border-slate-800 rounded-lg"></canvas>
+                    
+                    <!-- Live Wallpaper Specs Badge -->
+                    <div class="absolute bottom-3 left-4 bg-slate-900/90 backdrop-blur-md border border-slate-800 px-3 py-1.5 rounded-lg text-[11px] text-slate-400 flex items-center space-x-2 pointer-events-none shadow-lg">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span id="wp-current-res-label" class="font-mono text-slate-300">3440 × 1440</span>
+                        <span class="text-slate-600">|</span>
+                        <span>Shift = 45° Snap / Aspect Lock</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- End Main Shell -->
 
     <script>
     // --- DOM Element References ---
@@ -1375,11 +1971,66 @@
         return c.toDataURL('image/png');
     }
 
-    window.onresize = initializeCanvas;
-    window.onload = () => { initializeCanvas(); updateUI(); };
+    // --- Global Tab Switching Logic ---
+    const macroEditorView = document.getElementById('macro-editor-view');
+    const wallpaperEditorView = document.getElementById('wallpaper-editor-view');
+    const tabBtnMacro = document.getElementById('tab-btn-macro');
+    const tabBtnWallpaper = document.getElementById('tab-btn-wallpaper');
+
+    function switchAppTab(tabName) {
+        if (tabName === 'wallpaper') {
+            if (macroEditorView) macroEditorView.classList.add('hidden');
+            if (wallpaperEditorView) wallpaperEditorView.classList.remove('hidden');
+
+            if (tabBtnWallpaper) tabBtnWallpaper.className = 'tab-btn flex items-center space-x-2 px-3 py-1 text-xs font-semibold rounded-md transition-all text-white bg-indigo-600 shadow-sm';
+            if (tabBtnMacro) tabBtnMacro.className = 'tab-btn flex items-center space-x-2 px-3 py-1 text-xs font-semibold rounded-md transition-all text-slate-400 hover:text-slate-200';
+
+            window.location.hash = '#wallpaper';
+            if (window.WallpaperStudio) {
+                window.WallpaperStudio.init();
+            }
+        } else {
+            if (wallpaperEditorView) wallpaperEditorView.classList.add('hidden');
+            if (macroEditorView) macroEditorView.classList.remove('hidden');
+
+            if (tabBtnMacro) tabBtnMacro.className = 'tab-btn flex items-center space-x-2 px-3 py-1 text-xs font-semibold rounded-md transition-all text-white bg-indigo-600 shadow-sm';
+            if (tabBtnWallpaper) tabBtnWallpaper.className = 'tab-btn flex items-center space-x-2 px-3 py-1 text-xs font-semibold rounded-md transition-all text-slate-400 hover:text-slate-200';
+
+            window.location.hash = '#macro';
+            if (typeof initializeCanvas === 'function') {
+                setTimeout(initializeCanvas, 50);
+            }
+        }
+    }
+
+    if (tabBtnMacro) tabBtnMacro.addEventListener('click', () => switchAppTab('macro'));
+    if (tabBtnWallpaper) tabBtnWallpaper.addEventListener('click', () => switchAppTab('wallpaper'));
+
+    window.addEventListener('hashchange', () => {
+        if (window.location.hash === '#wallpaper') switchAppTab('wallpaper');
+        else if (window.location.hash === '#macro') switchAppTab('macro');
+    });
+
+    window.addEventListener('resize', () => {
+        if (macroEditorView && !macroEditorView.classList.contains('hidden')) {
+            initializeCanvas();
+        } else if (window.WallpaperStudio) {
+            window.WallpaperStudio.handleResize();
+        }
+    });
+
+    window.addEventListener('load', () => {
+        initializeCanvas();
+        updateUI();
+        if (window.location.hash === '#wallpaper') {
+            switchAppTab('wallpaper');
+        }
+    });
     
 
     
     </script>
+    <div id="wp-toast" class="fixed bottom-6 right-6 bg-slate-900/95 border border-slate-700 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-semibold z-50 flex items-center space-x-2 transition-all transform translate-y-2 opacity-0 pointer-events-none backdrop-blur-md"></div>
+    <script src="wallpaper.js"></script>
 </body>
 </html>
