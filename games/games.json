@@ -1,5 +1,12 @@
 [
   {
+    "title": "Battleship",
+    "slug": "battleship",
+    "path": "games/battleship/",
+    "summary": "Classic naval strategy vs computer AI. Position your fleet, track hits on radar, and sink the enemy armada.",
+    "tags": ["Strategy", "Vs Computer", "1 Player"]
+  },
+  {
     "title": "Mastermind",
     "slug": "mastermind",
     "path": "games/mastermind/",
