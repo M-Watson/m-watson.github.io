@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>By Ear — Musical Ear Training Flashcards</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="brand-row">
+        <div class="brand">
+          <span class="brand-icon" aria-hidden="true">♪</span>
+          <h1>By Ear</h1>
+        </div>
+        <span id="audio-status-badge" class="audio-badge" data-state="idle">Grand Piano Ready</span>
+      </div>
+
+      <!-- Mode Selector Tabs -->
+      <nav class="mode-tabs" aria-label="Game Modes">
+        <button type="button" class="mode-tab active" data-mode="note">Note</button>
+        <button type="button" class="mode-tab" data-mode="melody">Melody</button>
+        <button type="button" class="mode-tab" data-mode="chord">Chords</button>
+        <button type="button" class="mode-tab" data-mode="progression">Progressions</button>
+        <button type="button" class="mode-tab" data-mode="mixed">Mixed</button>
+      </nav>
+
+      <!-- Instrument & Transposition Toggles -->
+      <div class="settings-bar">
+        <div class="segmented-group" role="group" aria-label="Sound Instrument">
+          <span class="group-label">Sound:</span>
+          <button type="button" class="seg-btn active" data-instrument="piano">🎹 Piano</button>
+          <button type="button" class="seg-btn" data-instrument="trumpet">🎺 Trumpet</button>
+        </div>
+
+        <div class="segmented-group" role="group" aria-label="Pitch Transposition">
+          <span class="group-label">Pitch:</span>
+          <button type="button" class="seg-btn active" data-transposition="concert">Concert (C)</button>
+          <button type="button" class="seg-btn" data-transposition="bb">Bb Trumpet</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Flashcard Stage -->
+    <main class="card-stage">
+      <div class="deck-meta">
+        <span id="card-counter" class="card-counter">Card 1 of 1</span>
+        <span class="flip-hint">Tap card or press F to flip</span>
+      </div>
+
+      <div class="card-perspective">
+        <div id="flashcard" class="flashcard">
+          <!-- FRONT OF FLASHCARD (Question / Audio Prompt) -->
+          <section class="card-face card-front" aria-label="Flashcard Front">
+            <div class="card-top-row">
+              <span id="front-badge" class="card-badge">Single Note</span>
+              <span class="card-side-label">Prompt</span>
+            </div>
+
+            <div class="card-center-content">
+              <button type="button" id="front-play-btn" class="play-hero-btn" aria-label="Play Audio">
+                <span class="play-icon-circle">
+                  <svg viewBox="0 0 24 24" width="34" height="34" fill="currentColor" aria-hidden="true">
+                    <path d="M8 5.14v13.72a1 1 0 0 0 1.55.83l11-6.86a1 1 0 0 0 0-1.66l-11-6.86A1 1 0 0 0 8 5.14z"/>
+                  </svg>
+                </span>
+                <span id="front-play-label" class="play-hero-label">Play Audio</span>
+              </button>
+
+              <button type="button" id="front-arpeggio-btn" class="secondary-pill-btn" hidden>
+                ♫ Play Arpeggiated
+              </button>
+
+              <h2 id="front-title" class="prompt-title">Listen &amp; Identify the Note</h2>
+              <p id="front-hint" class="prompt-hint">Can you name this pitch by ear?</p>
+            </div>
+
+            <div class="card-bottom-row">
+              <button type="button" id="front-flip-btn" class="card-flip-trigger">
+                <span>Reveal Answer</span>
+                <span aria-hidden="true">↻</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- BACK OF FLASHCARD (Answer & Staff Notation) -->
+          <section class="card-face card-back" aria-label="Flashcard Answer">
+            <div class="card-top-row">
+              <span id="back-badge" class="card-badge">Single Note</span>
+              <span id="back-transposition-tag" class="pitch-tag">Concert Pitch</span>
+            </div>
+
+            <div class="card-back-body">
+              <div id="staff-container" class="staff-box"></div>
+
+              <div class="answer-details">
+                <div id="answer-title" class="answer-title">C4</div>
+                <div id="answer-subtitle" class="answer-subtitle">Concert Pitch (C4)</div>
+                <div id="answer-detail" class="answer-detail">MIDI 60</div>
+              </div>
+            </div>
+
+            <div class="card-bottom-row card-back-actions">
+              <button type="button" id="back-replay-btn" class="replay-btn">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                  <path d="M8 5.14v13.72a1 1 0 0 0 1.55.83l11-6.86a1 1 0 0 0 0-1.66l-11-6.86A1 1 0 0 0 8 5.14z"/>
+                </svg>
+                <span>Replay Audio</span>
+              </button>
+
+              <button type="button" id="back-flip-btn" class="card-flip-trigger secondary">
+                <span>Flip to Front</span>
+                <span aria-hidden="true">↺</span>
+              </button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- Bottom Deck Navigation Bar -->
+    <footer class="deck-nav">
+      <button type="button" id="prev-card-btn" class="nav-btn" disabled>
+        <span aria-hidden="true">←</span>
+        <span class="btn-label">Prev</span>
+      </button>
+
+      <button type="button" id="bottom-flip-btn" class="nav-btn nav-btn-flip">
+        <span aria-hidden="true">↻</span>
+        <span class="btn-label">Flip Card</span>
+      </button>
+
+      <button type="button" id="next-card-btn" class="nav-btn nav-btn-primary">
+        <span class="btn-label">Next Card</span>
+        <span aria-hidden="true">→</span>
+      </button>
+    </footer>
+
+    <div class="desktop-shortcuts" aria-hidden="true">
+      <span><kbd>Space</kbd> Play / Replay</span>
+      <span><kbd>F</kbd> Flip Card</span>
+      <span><kbd>←</kbd> <kbd>→</kbd> Prev / Next Card</span>
+    </div>
+  </div>
+
+  <script defer src="js/theory.js"></script>
+  <script defer src="js/audio.js"></script>
+  <script defer src="js/staff.js"></script>
+  <script defer src="js/app.js"></script>
+</body>
+</html>
