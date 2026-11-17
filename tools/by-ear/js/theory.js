@@ -3,6 +3,8 @@
 
 (function (global) {
   const BASE_MIDI = 58; // Concert Bb3 = Written C4 for Bb Trumpet
+  const MIN_MIDI = 58;  // Concert Bb3 (Written C4)
+  const MAX_MIDI = 77;  // Concert F5  (Written G5)
 
   const CHROMATIC_SHARP = [
     { name: "C", stepOffset: 0, acc: "" },
@@ -61,6 +63,41 @@
       concert: midiToNoteInfo(concertMidi, preferFlatsConcert),
       bb: midiToNoteInfo(concertMidi + 2, preferFlatsBb)
     };
+  }
+
+  /**
+   * Returns all available notes in the standard range (MIDI 58..77)
+   * for populating the Reference / Practice Note selector.
+   */
+  function getReferenceNotesList() {
+    const list = [];
+    for (let midi = MIN_MIDI; midi <= MAX_MIDI; midi++) {
+      const dual = getDualNoteData(midi, true, false);
+      list.push({
+        midi,
+        concert: dual.concert,
+        bb: dual.bb
+      });
+    }
+    return list;
+  }
+
+  /**
+   * Returns candidate Concert MIDI numbers in [minMidi, maxMidi],
+   * optionally filtered to natural notes only (no sharps/flats) in the active transposition.
+   */
+  function getCandidateMidis(minMidi, maxMidi, options = {}) {
+    const { naturalsOnly = false, transposition = "concert" } = options;
+    const pool = [];
+    for (let m = minMidi; m <= maxMidi; m++) {
+      if (naturalsOnly) {
+        const dual = getDualNoteData(m, true, false);
+        const target = transposition === "bb" ? dual.bb : dual.concert;
+        if (target.acc !== "") continue;
+      }
+      pool.push(m);
+    }
+    return pool;
   }
 
   const CHORD_TYPES = [
@@ -149,15 +186,19 @@
     return arr[Math.floor(Math.random() * arr.length)];
   }
 
-  function generateNoteCard() {
-    const midi = randomInt(58, 77);
+  function generateNoteCard(options = {}) {
+    const pool = getCandidateMidis(MIN_MIDI, MAX_MIDI, options);
+    const midi = randomChoice(pool);
     const noteData = getDualNoteData(midi, true, false);
+    const badgeSuffix = options.naturalsOnly ? " (Naturals)" : "";
 
     return {
       type: "note",
-      badge: "Single Note",
+      badge: `Single Note${badgeSuffix}`,
       promptTitle: "Listen & Identify the Note",
-      promptHint: "Can you name this pitch by ear?",
+      promptHint: options.naturalsOnly
+        ? "Sharps & flats are off — identify this natural note!"
+        : "Can you name this pitch by ear?",
       playbackEvents: [{ notes: [midi], duration: 0.95 }],
       concert: {
         title: noteData.concert.dualName,
@@ -174,26 +215,33 @@
     };
   }
 
-  function generateMelodyCard(length = 3) {
-    const startMidi = randomInt(60, 72);
-    const midis = [startMidi];
-    const allowedSteps = [-5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 7];
+  function generateMelodyCard(length = 3, options = {}) {
+    const fullPool = getCandidateMidis(MIN_MIDI, MAX_MIDI, options);
+    const startPool = getCandidateMidis(60, 72, options);
+    const firstMidi = randomChoice(startPool.length > 0 ? startPool : fullPool);
+
+    const midis = [firstMidi];
 
     for (let i = 1; i < length; i++) {
       const prev = midis[i - 1];
-      const candidates = allowedSteps
-        .map((d) => prev + d)
-        .filter((m) => m >= 58 && m <= 77);
-      midis.push(randomChoice(candidates));
+      // Pick notes within a musical interval (1 to 7 semitones away) from the allowed pool
+      const nearby = fullPool.filter((m) => {
+        const diff = Math.abs(m - prev);
+        return diff >= 1 && diff <= 7;
+      });
+      midis.push(randomChoice(nearby.length > 0 ? nearby : fullPool));
     }
 
     const dualNotes = midis.map((m) => getDualNoteData(m, true, false));
+    const badgeSuffix = options.naturalsOnly ? " (Naturals)" : "";
 
     return {
       type: "melody",
-      badge: `${length}-Note Series`,
+      badge: `${length}-Note Series${badgeSuffix}`,
       promptTitle: "Listen & Identify the Melody",
-      promptHint: `Hear the sequence of ${length} notes and trace their contour.`,
+      promptHint: options.naturalsOnly
+        ? `Hear the ${length} natural notes (no sharps/flats) and trace their contour.`
+        : `Hear the sequence of ${length} notes and trace their contour.`,
       playbackEvents: midis.map((m) => ({ notes: [m], duration: 0.65 })),
       concert: {
         title: dualNotes.map((n) => n.concert.name).join("  →  "),
@@ -298,22 +346,22 @@
     };
   }
 
-  function generateCard(mode = "note") {
+  function generateCard(mode = "note", options = {}) {
     switch (mode) {
       case "note":
-        return generateNoteCard();
+        return generateNoteCard(options);
       case "melody":
-        return generateMelodyCard(3);
+        return generateMelodyCard(3, options);
       case "chord":
         return generateChordCard();
       case "progression":
         return generateProgressionCard();
       case "mixed": {
         const modes = ["note", "melody", "chord", "progression"];
-        return generateCard(randomChoice(modes));
+        return generateCard(randomChoice(modes), options);
       }
       default:
-        return generateNoteCard();
+        return generateNoteCard(options);
     }
   }
 
@@ -322,6 +370,7 @@
     BASE_MIDI,
     midiToNoteInfo,
     getDualNoteData,
+    getReferenceNotesList,
     generateCard
   };
 })(window);

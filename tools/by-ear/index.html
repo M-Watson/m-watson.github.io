@@ -27,7 +27,7 @@
         <button type="button" class="mode-tab" data-mode="mixed">Mixed</button>
       </nav>
 
-      <!-- Instrument & Transposition Toggles -->
+      <!-- Instrument, Transposition & Accidentals Toggles -->
       <div class="settings-bar">
         <div class="segmented-group" role="group" aria-label="Sound Instrument">
           <span class="group-label">Sound:</span>
@@ -40,6 +40,22 @@
           <button type="button" class="seg-btn active" data-transposition="concert">Concert (C)</button>
           <button type="button" class="seg-btn" data-transposition="bb">Bb Trumpet</button>
         </div>
+
+        <div class="segmented-group" role="group" aria-label="Sharps and Flats Filter">
+          <span class="group-label">Notes:</span>
+          <button type="button" class="seg-btn active" data-accidentals="all">All (♯/♭)</button>
+          <button type="button" class="seg-btn" data-accidentals="naturals">No ♯/♭ (Naturals)</button>
+        </div>
+      </div>
+
+      <!-- Reference / Practice Note Selector Bar -->
+      <div class="reference-bar" role="region" aria-label="Reference and Practice Note Player">
+        <label for="ref-note-select" class="ref-label">Ref / Practice:</label>
+        <select id="ref-note-select" class="ref-select" aria-label="Choose a reference or practice note"></select>
+        <button type="button" id="ref-play-btn" class="ref-play-btn">
+          <span aria-hidden="true">♪</span>
+          <span>Play Note</span>
+        </button>
       </div>
     </header>
 
@@ -140,8 +156,9 @@
 
     <div class="desktop-shortcuts" aria-hidden="true">
       <span><kbd>Space</kbd> Play / Replay</span>
+      <span><kbd>R</kbd> Play Ref Note</span>
       <span><kbd>F</kbd> Flip Card</span>
-      <span><kbd>←</kbd> <kbd>→</kbd> Prev / Next Card</span>
+      <span><kbd>←</kbd> <kbd>→</kbd> Prev / Next</span>
     </div>
   </div>
 
